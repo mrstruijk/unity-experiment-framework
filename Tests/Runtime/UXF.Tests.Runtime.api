@@ -1,0 +1,17 @@
+// This file is generated. Do not modify by hand.
+// XML documentation file not found. To check if public methods have XML comments,
+// make sure the XML doc file is present and located next to the scraped dll
+namespace UXF.Tests
+{
+    public class TestableDataHandler : DataHandler
+    {
+        public UXFDataTable trialResults;
+        public TestableDataHandler() {}
+        public override bool CheckIfRiskOfOverwrite(string experiment, string ppid, int sessionNum, string rootPath = @"");
+        public override string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public override string HandleDataTable(UXFDataTable table, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public override string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+    }
+}

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
@@ -23,13 +23,13 @@ namespace UXF
         /// <summary>
         /// Description of the type of measurement this tracker will perform.
         /// </summary>
-        public abstract string MeasurementDescriptor { get; }  
+        public abstract string MeasurementDescriptor { get; }
 
         /// <summary>
         /// Custom column headers for tracked objects.
         /// </summary>
-        public abstract IEnumerable<string> CustomHeader { get; }  
-   
+        public abstract IEnumerable<string> CustomHeader { get; }
+
         /// <summary>
         /// A name used when saving the data from this tracker.
         /// </summary>
@@ -39,7 +39,7 @@ namespace UXF
             {
                 Debug.AssertFormat(MeasurementDescriptor.Length > 0,
                     "No measurement descriptor has been specified for this Tracker!");
-                return string.Join("_", new string[]{ objectName, MeasurementDescriptor });
+                return string.Join("_", new string[] { objectName, MeasurementDescriptor });
             }
         }
 
@@ -60,6 +60,35 @@ namespace UXF
             " either from another script or a custom Tracker class.")]
         public TrackerUpdateType updateType = TrackerUpdateType.LateUpdate;
 
+        [Tooltip("SOSXR: enable this if you want to automatically add this Tracker to the Session")]
+        public bool autoAddTrackerToSession = true;
+
+        private void Awake()
+        {
+            AutoAddTracker();
+        }
+
+        // SOSXR
+        private void AutoAddTracker()
+        {
+            if (!autoAddTrackerToSession)
+            {
+                return;
+            }
+
+            var session = FindFirstObjectByType<Session>();
+
+            if (session == null)
+            {
+                return;
+            }
+
+            if (!session.trackedObjects.Contains(this))
+            {
+                session.trackedObjects.Add(this);
+            }
+        }
+
         // called when component is added
         void Reset()
         {
@@ -69,13 +98,15 @@ namespace UXF
         // called by unity just before rendering the frame
         void LateUpdate()
         {
-            if (Recording && updateType == TrackerUpdateType.LateUpdate) RecordRow();
+            if (Recording && updateType == TrackerUpdateType.LateUpdate)
+                RecordRow();
         }
 
         // called by unity when physics simulations are run
         void FixedUpdate()
         {
-            if (Recording && updateType == TrackerUpdateType.FixedUpdate) RecordRow();
+            if (Recording && updateType == TrackerUpdateType.FixedUpdate)
+                RecordRow();
         }
 
         /// <summary>
@@ -83,9 +114,10 @@ namespace UXF
         /// </summary>
         public void RecordRow()
         {
-            if (!Recording) throw new System.InvalidOperationException(
+            if (!Recording)
+                throw new System.InvalidOperationException(
                 "Tracker measurements cannot be taken when not recording!");
-            
+
             UXFDataRow newRow = GetCurrentValues();
             newRow.Add(("time", Time.time));
             Data.AddCompleteRow(newRow);
@@ -155,7 +187,7 @@ namespace UXF
     }
 
     /// <summary>
-    /// When the tracker should collect new measurements. 
+    /// When the tracker should collect new measurements.
     /// Manual should only be selected if the user is calling the RecordRow method
     /// either from another script or a custom Tracker class.
     /// </summary>

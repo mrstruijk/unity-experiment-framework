@@ -680,6 +680,7 @@ namespace UXF
 
     public abstract class Tracker : UnityEngine.MonoBehaviour
     {
+        [UnityEngine.Tooltip(@"SOSXR: enable this if you want to automatically add this Tracker to the Session")] public bool autoAddTrackerToSession = true;
         public string objectName;
         [UnityEngine.Tooltip(@"When the measurements should be taken.Manual should only be selected if the user is calling the RecordRow method either from another script or a custom Tracker class.")] public TrackerUpdateType updateType;
         public TrackerState CurrentState { get; }
