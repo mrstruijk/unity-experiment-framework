@@ -1,0 +1,1108 @@
+// This file is generated. Do not modify by hand.
+// XML documentation file not found. To check if public methods have XML comments,
+// make sure the XML doc file is present and located next to the scraped dll
+public class BeginReadOnlyGroupAttribute : UnityEngine.PropertyAttribute
+{
+    public BeginReadOnlyGroupAttribute() {}
+}
+
+public class EndReadOnlyGroupAttribute : UnityEngine.PropertyAttribute
+{
+    public EndReadOnlyGroupAttribute() {}
+}
+
+[UnityEngine.CreateAssetMenu(fileName = @"ExperimentSettings", menuName = @"SOSXR/UXF/ExperimentSettings")] public class ExperimentSettings : UnityEngine.ScriptableObject
+{
+    public int BlocksAmount { get; }
+    public bool ShuffleBlocks { get; }
+    public int StartNextTrialDelayMS { get; }
+    public int TrialsPerBlock { get; }
+    public ExperimentSettings() {}
+}
+
+[System.AttributeUsage(System.AttributeTargets.Field)] public class InspectorButtonAttribute : UnityEngine.PropertyAttribute
+{
+    public static float kDefaultButtonWidth = 240f;
+    public readonly string MethodName;
+    public float ButtonWidth { get; set; }
+    public InspectorButtonAttribute(string MethodName) {}
+}
+
+[UnityEditor.CustomPropertyDrawer(typeof(InspectorButtonAttribute))] public class InspectorButtonPropertyDrawer : UnityEditor.PropertyDrawer
+{
+    public InspectorButtonPropertyDrawer() {}
+    public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty prop, UnityEngine.GUIContent label);
+}
+
+public class ReadOnlyAttribute : UnityEngine.PropertyAttribute
+{
+    public ReadOnlyAttribute() {}
+}
+
+namespace BasteRainGames
+{
+    public enum HideIf
+    {
+        Equal = 0,
+        NotEqual = 1,
+    }
+
+    [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = true, Inherited = true)] public class HideIfAttribute : HidingAttribute
+    {
+        public readonly bool state;
+        public readonly string variable;
+        public HideIfAttribute(string variable, bool state, int order = 0) {}
+    }
+
+    [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = true, Inherited = true)] public class HideIfEnumValueAttribute : HidingAttribute
+    {
+        public readonly bool hideIfEqual;
+        public readonly int[] states;
+        public readonly string variable;
+        public HideIfEnumValueAttribute(string variable, HideIf hideIf, params int[] states) {}
+    }
+
+    public class HideIfExampleScript : UnityEngine.MonoBehaviour
+    {
+        public TestData a;
+        [HideIf(@"hide", true, 0)] public TestData b;
+        [HideIf(@"hide", true, 0)] public TestDataParent c;
+        public TestDataParent d;
+        public bool hide;
+        [HideIfEnumValue(@"testEnum", HideIf.Equal, new[] {0})] public string isNotVal1 = @"Val 1 not selected";
+        [HideIfEnumValue(@"testEnum", HideIf.Equal, new[] {1, 2})] public string isNotVal2Or3 = @"Neither Val 2 nor 3 are selected";
+        [HideIfEnumValue(@"testEnum", HideIf.NotEqual, new[] {0})] public string isVal1 = @"Val 1 selected";
+        [HideIfEnumValue(@"testEnum", HideIf.NotEqual, new[] {1, 2})] public string isVal2Or3 = @"Val 2 or 3 are selected";
+        [UnityEngine.Space(10f)] public UnityEngine.Object obj;
+        [HideIfNull(@"obj", 0)] public string objIsNotNull = @"Shown as obj is not null!";
+        [HideIfNotNull(@"obj", 0)] public string objIsNull = @"Shown as obj is null!";
+        [HideIf(@"showS1", false, 0)] public string s1 = @"S1";
+        [HideIf(@"showS1", true, 0)] public string s2 = @"S2 instead";
+        public bool showS1;
+        [UnityEngine.Space(10f)] public HideIfExampleScript.TestEnum testEnum;
+        public HideIfExampleScript() {}
+        public enum TestEnum
+        {
+            Val1 = 0,
+            Val2 = 1,
+            Val3 = 2,
+        }
+    }
+
+    [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = true, Inherited = true)] public class HideIfNotNullAttribute : HidingAttribute
+    {
+        public readonly string variable;
+        public HideIfNotNullAttribute(string variable, int order = 0) {}
+    }
+
+    [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = true, Inherited = true)] public class HideIfNullAttribute : HidingAttribute
+    {
+        public readonly string variable;
+        public HideIfNullAttribute(string variable, int order = 0) {}
+    }
+
+    public class HidingAttribute : UnityEngine.PropertyAttribute
+    {
+        public HidingAttribute() {}
+    }
+
+    public class TestData : TestDataParent
+    {
+        public TestData() {}
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(TestDataParent), true)] public class TestDataDrawer : UnityEditor.PropertyDrawer
+    {
+        public TestDataDrawer() {}
+        public override float GetPropertyHeight(UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+        public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+    }
+
+    public class TestDataParent
+    {
+        public int a;
+        public string b;
+        public TestDataParent() {}
+    }
+}
+
+namespace MiniJSON
+{
+    public static class Json
+    {
+        public static object Deserialize(string json);
+        public static string Serialize(object obj);
+    }
+}
+
+namespace SFB
+{
+    public struct ExtensionFilter
+    {
+        public string[] Extensions;
+        public string Name;
+        public ExtensionFilter(string filterName, params string[] filterExtensions) {}
+    }
+
+    public interface IStandaloneFileBrowser
+    {
+        public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect);
+        public void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, System.Action<string[]> cb);
+        public string[] OpenFolderPanel(string title, string directory, bool multiselect);
+        public void OpenFolderPanelAsync(string title, string directory, bool multiselect, System.Action<string[]> cb);
+        public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions);
+        public void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, System.Action<string> cb);
+    }
+
+    public class StandaloneFileBrowser
+    {
+        public StandaloneFileBrowser() {}
+        public static string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect);
+        public static string[] OpenFilePanel(string title, string directory, string extension, bool multiselect);
+        public static void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, System.Action<string[]> cb);
+        public static void OpenFilePanelAsync(string title, string directory, string extension, bool multiselect, System.Action<string[]> cb);
+        public static string[] OpenFolderPanel(string title, string directory, bool multiselect);
+        public static void OpenFolderPanelAsync(string title, string directory, bool multiselect, System.Action<string[]> cb);
+        public static string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions);
+        public static string SaveFilePanel(string title, string directory, string defaultName, string extension);
+        public static void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, System.Action<string> cb);
+        public static void SaveFilePanelAsync(string title, string directory, string defaultName, string extension, System.Action<string> cb);
+    }
+
+    public class StandaloneFileBrowserEditor : IStandaloneFileBrowser
+    {
+        public StandaloneFileBrowserEditor() {}
+        public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect);
+        public void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, System.Action<string[]> cb);
+        public string[] OpenFolderPanel(string title, string directory, bool multiselect);
+        public void OpenFolderPanelAsync(string title, string directory, bool multiselect, System.Action<string[]> cb);
+        public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions);
+        public void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, System.Action<string> cb);
+    }
+
+    public class StandaloneFileBrowserMac : IStandaloneFileBrowser
+    {
+        public StandaloneFileBrowserMac() {}
+        public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect);
+        public void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, System.Action<string[]> cb);
+        public string[] OpenFolderPanel(string title, string directory, bool multiselect);
+        public void OpenFolderPanelAsync(string title, string directory, bool multiselect, System.Action<string[]> cb);
+        public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions);
+        public void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, System.Action<string> cb);
+        [System.Runtime.InteropServices.UnmanagedFunctionPointer(System.Runtime.InteropServices.CallingConvention.StdCall)] public delegate void AsyncCallback(string path);
+    }
+}
+
+namespace SOSXR.UXF
+{
+    public class ExperimentGenerator : UnityEngine.MonoBehaviour
+    {
+        public ExperimentGenerator() {}
+        public void GenerateSession(UXF.Session session);
+    }
+
+    [UnityEngine.RequireComponent(typeof(UXF.Session))] public class ExperimentRunner : UnityEngine.MonoBehaviour
+    {
+        public ExperimentRunner() {}
+        [UnityEngine.ContextMenu(@"StartTrial")] public void StartTrial();
+        [UnityEngine.ContextMenu(@"StopSessionEarly")] public void StopSessionEarly();
+        [UnityEngine.ContextMenu(@"StopTrial")] public void StopTrial();
+    }
+
+    public abstract class SettingsResponder : UnityEngine.MonoBehaviour
+    {
+        protected UXF.Session _session;
+        [UnityEngine.SerializeField] protected string m_settingsKey;
+        protected SettingsResponder() {}
+        protected abstract void BlockBegin();
+        protected abstract void BlokEnd();
+        protected bool GetValue<T>(string key, out T value);
+        protected abstract void TrialBegin();
+        protected abstract void TrialEnd();
+    }
+
+    public class SettingToUnityEventBool : SettingsResponder
+    {
+        public UnityEngine.Events.UnityEvent<bool> OnBlockBegin;
+        public UnityEngine.Events.UnityEvent<bool> OnBlockEnd;
+        public UnityEngine.Events.UnityEvent<bool> OnTrialBegin;
+        public UnityEngine.Events.UnityEvent<bool> OnTrialEnd;
+        public bool Value { get; }
+        public SettingToUnityEventBool() {}
+        protected override void BlockBegin();
+        protected override void BlokEnd();
+        protected override void TrialBegin();
+        protected override void TrialEnd();
+    }
+
+    public class SettingToUnityEventInt : SettingsResponder
+    {
+        [UnityEngine.Space(15f)] public UnityEngine.Events.UnityEvent<int> OnBlockBegin;
+        public UnityEngine.Events.UnityEvent<int> OnBlockEnd;
+        public UnityEngine.Events.UnityEvent<int> OnTrialBegin;
+        public UnityEngine.Events.UnityEvent<int> OnTrialEnd;
+        public int Value { get; }
+        public SettingToUnityEventInt() {}
+        protected override void BlockBegin();
+        protected override void BlokEnd();
+        protected override void TrialBegin();
+        protected override void TrialEnd();
+    }
+
+    public class SettingToUnityEventString : SettingsResponder
+    {
+        [UnityEngine.Space(15f)] public UnityEngine.Events.UnityEvent<string> OnBlockBegin;
+        public UnityEngine.Events.UnityEvent<string> OnBlockEnd;
+        public UnityEngine.Events.UnityEvent<string> OnTrialBegin;
+        public UnityEngine.Events.UnityEvent<string> OnTrialEnd;
+        public string Value { get; }
+        public SettingToUnityEventString() {}
+        protected override void BlockBegin();
+        protected override void BlokEnd();
+        protected override void TrialBegin();
+        protected override void TrialEnd();
+    }
+
+    public class SettingToUnityEventVoid : SettingsResponder
+    {
+        [UnityEngine.Space(10f)] public UnityEngine.Events.UnityEvent OnBlockBegin;
+        public UnityEngine.Events.UnityEvent OnBlockEnd;
+        public UnityEngine.Events.UnityEvent OnTrialBegin;
+        public UnityEngine.Events.UnityEvent OnTrialEnd;
+        public SettingToUnityEventVoid() {}
+        protected override void BlockBegin();
+        protected override void BlokEnd();
+        protected override void TrialBegin();
+        protected override void TrialEnd();
+    }
+
+    public static class UXFExtensions
+    {
+        public static bool DoesAnyBlockHaveSetting(this UXF.Session session, string key);
+        public static bool DoesSettingExist(this UXF.Session session, string key);
+        public static int GetCurrentRelativeTrialNumber(this UXF.Block block);
+        public static UXF.Trial GetCurrentTrialInBlock(this UXF.Block block);
+        public static UXF.Trial GetFirsTrialInBlock(this UXF.Block block);
+        public static UXF.Trial GetLastTrialInBlock(this UXF.Block block);
+        public static System.Collections.Generic.Dictionary<string, object> GetSessionSettings(this UXF.Session session);
+        public static T GetSetting<T>(this UXF.Block block, string key);
+        public static System.Collections.Generic.Dictionary<string, object> GetSettings(this UXF.Block block);
+        public static bool HasSetting(this UXF.Block block, string key);
+        public static bool HasSetting(this UXF.Session session, string key);
+        public static bool IsFirstTrialInBlock(this UXF.Trial trial);
+        public static bool IsInitialised(this UXF.Session session);
+        public static bool IsLastTrial(this UXF.Session session);
+        public static bool IsLastTrialInBlock(this UXF.Trial trial);
+        public static void SetValueStored(this UXF.Settings settings, string key, object value, bool logSettings = true);
+        public static bool TrialInProgress(this UXF.Session session);
+    }
+}
+
+namespace SubjectNerd.Utilities
+{
+    public class EditScriptableAttribute : UnityEngine.PropertyAttribute
+    {
+        public EditScriptableAttribute() {}
+    }
+
+    public class ReorderableAttribute : UnityEngine.PropertyAttribute
+    {
+        public string ElementHeader { get; protected set; }
+        public bool ElementSingleLine { get; protected set; }
+        public bool HeaderZeroIndex { get; protected set; }
+        public ReorderableAttribute() {}
+        public ReorderableAttribute(string headerString = @"", bool isZeroIndex = true, bool isSingleLine = false) {}
+    }
+}
+
+namespace UXF
+{
+    public class ApplicationHandler : UnityEngine.MonoBehaviour
+    {
+        public ApplicationHandler() {}
+        public void Quit();
+        public void ReloadScene();
+    }
+
+    [UnityEngine.CreateAssetMenu(fileName = @"MyAWSCredentials", menuName = @"UXF/AWS Credentials", order = 1)] public class AWSCredentials : UnityEngine.ScriptableObject
+    {
+        [UnityEngine.TextArea] public string cognitoIdentityPool;
+        public string region;
+        public AWSCredentials() {}
+        public bool CheckIfValidFormat();
+    }
+
+    public class Block : IExperimentUnit, ISettingsContainer
+    {
+        public System.Collections.Generic.List<Trial> trials = new();
+        public Trial firstTrial { get; }
+        public Trial lastTrial { get; }
+        public int number { get; }
+        public bool saveData { get; set; }
+        public Session session { get; }
+        public Settings settings { get; protected set; }
+        public Block(uint numberOfTrials, Session session) {}
+        public Trial CreateTrial();
+        public Trial GetRelativeTrial(int relativeTrialNumber);
+    }
+
+    public class BlockEvent : UnityEngine.Events.UnityEvent<Block>
+    {
+        public BlockEvent() {}
+    }
+
+    public static class Constants
+    {
+        public const string SAVE_DATA_SETTING_NAME = @"_UXFInternal_SaveData";
+    }
+
+    public class CSVExperimentBuilder : UnityEngine.MonoBehaviour, IExperimentBuilder
+    {
+        public CSVExperimentBuilder() {}
+        public void BuildExperiment(Session session);
+    }
+
+    public abstract class DataHandler : UnityEngine.MonoBehaviour
+    {
+        public bool active = true;
+        public Session session { get; }
+        protected DataHandler() {}
+        public abstract bool CheckIfRiskOfOverwrite(string experiment, string ppid, int sessionNum, string rootPath = @"");
+        public virtual void CleanUp();
+        public abstract string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public abstract string HandleDataTable(UXFDataTable table, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public abstract string HandleJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public abstract string HandleJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public abstract string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNumber = 0);
+        public void Initialise(Session session);
+        public virtual bool IsCompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+        public virtual bool IsIncompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+        public virtual void SetUp();
+    }
+
+    public static class DataHandlerEnumExtensions
+    {
+        public static UXFDataLevel GetDataLevel(this UXFDataType dt);
+        public static string GetFolderName(this UXFDataType dt);
+        public static System.Collections.Generic.IEnumerable<UXFDataType> GetValidDataTypes(this UXFDataLevel level);
+    }
+
+    public enum DataSaveLocation
+    {
+        AcquireFromUI = 0,
+        Fixed = 1,
+        PersistentDataPath = 2,
+    }
+
+    public class DynamoDBCreationQuery
+    {
+        public DynamoDBCreationQuery(string tableName) {}
+    }
+
+    [UnityEngine.ExecuteInEditMode] public class EventSystemFallback : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.GameObject eventSystemPrefab;
+        public EventSystemFallback() {}
+    }
+
+    public static class Extensions
+    {
+        public static System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<TSource>> Batch<TSource>(this System.Collections.Generic.IEnumerable<TSource> source, int size);
+        public static System.Collections.Generic.List<T> Clone<T>(this System.Collections.Generic.IList<T> listToClone) where T : System.ICloneable;
+        public static string CombinePaths(string path1, params string[] paths);
+        public static string GetSafeFilename(string filename);
+        public static void Shuffle<T>(this System.Collections.Generic.IList<T> list);
+        public static void Shuffle<T>(this System.Collections.Generic.IList<T> list, System.Random rng);
+        public static void Swap<T>(this System.Collections.Generic.IList<T> list, int indexA, int indexB);
+        public static string ToLower(this UXFDataType dataType);
+    }
+
+    public class FileSaver : LocalFileDataHander
+    {
+        public static System.Action doNothing;
+        [UnityEngine.Tooltip(@"Enable to force the data to save with an english-US format (i.e. `,` to serapate values, and `.` to separate decimal points).")] public bool forceENUSLocale = true;
+        [UnityEngine.Tooltip(@"Enable to sort session files into folders. The trial_results CSV is never put into a folder.")] public bool sortDataIntoFolders = true;
+        [UnityEngine.Tooltip(@"Enable to print debug messages to the console.")] public bool verboseDebug;
+        public bool IsActive { get; }
+        public FileSaver() {}
+        public override bool CheckIfRiskOfOverwrite(string experiment, string ppid, int sessionNum, string rootPath = @"");
+        public override void CleanUp();
+        public static string GetRelativePath(string relativeToDirectory, string path);
+        public string GetSessionPath(Session session);
+        public string GetSessionPath(string experiment, string ppid, int sessionNum);
+        public override string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleDataTable(UXFDataTable table, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public void ManageInWorker(System.Action action);
+        public static string SessionNumToName(int num);
+        public override void SetUp();
+    }
+
+    public class HTTPPost : DataHandler
+    {
+        [UnityEngine.Tooltip(@"Key used in the form for the data.")] public string dataKey = @"data";
+        [UnityEngine.Tooltip(@"Key used in the form for a desired filepath.")] public string filepathKey = @"filepath";
+        [UnityEngine.Space] [UnityEngine.Tooltip(@"Enable to use username and password to add Basic HTTP Authentication to the request.")] public bool httpBasicAuthentication = true;
+        [BasteRainGames.HideIf(@"httpBasicAuthentication", false, 0)] public string password = @"password";
+        [UnityEngine.Tooltip(@"URL of the form to POST to.")] public string url = @"http://127.0.0.1:5000/";
+        [BasteRainGames.HideIf(@"httpBasicAuthentication", false, 0)] public string username = @"susan";
+        public HTTPPost() {}
+        public override bool CheckIfRiskOfOverwrite(string experiment, string ppid, int sessionNum, string rootPath = @"");
+        public override void CleanUp();
+        public string GetSessionPathRelative(string experiment, string ppid, int sessionNum);
+        public override string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleDataTable(UXFDataTable table, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+    }
+
+    public interface IDataAssociatable
+    {
+        public bool CheckDataTypeIsValid(string dataName, UXFDataType dataType);
+        public void SaveBytes(byte[] bytes, string dataName, UXFDataType dataType);
+        public void SaveDataTable(UXFDataTable table, string dataName, UXFDataType dataType);
+        public void SaveJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string dataName, UXFDataType dataType);
+        public void SaveJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string dataName, UXFDataType dataType);
+        public void SaveText(string text, string dataName, UXFDataType dataType);
+    }
+
+    public interface IExperimentBuilder
+    {
+        public void BuildExperiment(Session session);
+    }
+
+    public interface IExperimentUnit : ISettingsContainer
+    {
+        public bool saveData { get; }
+    }
+
+    public interface ISettingsContainer
+    {
+        public Settings settings { get; }
+    }
+
+    public abstract class LocalFileDataHander : DataHandler
+    {
+        [UnityEngine.Space] [UnityEngine.Tooltip(@"Should the location the data is stored in be: Acquired via the UI, or, a fixed path?")] public DataSaveLocation dataSaveLocation;
+        [UnityEngine.HideInInspector] public UnityEngine.Events.UnityEvent onValidateEvent = new();
+        [BasteRainGames.HideIfEnumValue(@"dataSaveLocation", BasteRainGames.HideIf.NotEqual, new[] {1})] [UnityEngine.SerializeField] [UnityEngine.Tooltip(@"If fixed path is selected, where should the data be stored? You could set this value by writing a script that writes to this field in Awake().")] public string storagePath = @"~";
+        public string StoragePath { get; set; }
+        protected LocalFileDataHander() {}
+        public override bool IsCompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+        public override bool IsIncompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+    }
+
+    public class MouseScreenTracker : Tracker
+    {
+        public override System.Collections.Generic.IEnumerable<string> CustomHeader { get; }
+        public override string MeasurementDescriptor { get; }
+        public MouseScreenTracker() {}
+        protected override UXFDataRow GetCurrentValues();
+    }
+
+    public class MouseWorldTracker : Tracker
+    {
+        [UnityEngine.Tooltip(@"Distance from the camera plane to convert pixels to world point.For perspective cameras this should be the distance from the camera to the plane you're interested in measuring.For orthographic cameras this value shouldn't matter.")] public float distanceFromCamera = 1f;
+        [UnityEngine.Tooltip(@"Assign the main camera in the scene here.")] public UnityEngine.Camera mainCamera;
+        public override System.Collections.Generic.IEnumerable<string> CustomHeader { get; }
+        public override string MeasurementDescriptor { get; }
+        public MouseWorldTracker() {}
+        protected override UXFDataRow GetCurrentValues();
+    }
+
+    public class NoSuchTrialException : System.Exception
+    {
+        public NoSuchTrialException() {}
+        public NoSuchTrialException(string message) {}
+        public NoSuchTrialException(string message, System.Exception inner) {}
+    }
+
+    public class PositionRotationTracker : Tracker
+    {
+        public override System.Collections.Generic.IEnumerable<string> CustomHeader { get; }
+        public override string MeasurementDescriptor { get; }
+        public PositionRotationTracker() {}
+        protected override UXFDataRow GetCurrentValues();
+    }
+
+    public class ResultsDictionary
+    {
+        public object this[string key] { get; set; }
+        public System.Collections.Generic.Dictionary<string, object>.KeyCollection Keys { get; }
+        public ResultsDictionary(System.Collections.Generic.IEnumerable<string> initialKeys, bool allowAdHocAdding) {}
+        public bool ContainsKey(string key);
+    }
+
+    [UnityEngine.ExecuteInEditMode] public class Session : UnityEngine.MonoBehaviour, IDataAssociatable, IExperimentUnit, ISettingsContainer
+    {
+        [UnityEngine.HideInInspector] public System.Collections.Generic.List<Block> blocks = new();
+        public int currentBlockNum;
+        public int currentTrialNum;
+        [SubjectNerd.Utilities.Reorderable] [UnityEngine.Tooltip(@"List of dependent variables you plan to measure in your experiment. Once set here, you can add the observations to your results dictionary on each trial.")] public System.Collections.Generic.List<string> customHeaders = new();
+        [SubjectNerd.Utilities.Reorderable] public DataHandler[] dataHandlers;
+        [UnityEngine.Tooltip(@"If enabled, this GameObject will not be destroyed when you load a new scene.")] public bool dontDestroyOnLoadNewScene;
+        [UnityEngine.Tooltip(@"Enable to automatically end the session when the final trial has ended.")] public bool endAfterLastTrial;
+        [UnityEngine.Tooltip(@"Enable to automatically safely end the session when this object is destroyed.")] public bool endOnDestroy = true;
+        [UnityEngine.Tooltip(@"Enable to automatically safely end the session when the application is quitting.")] public bool endOnQuit = true;
+        public string experimentName;
+        public static Session instance;
+        public int number;
+        [UnityEngine.Tooltip(@"Items in this event will be triggered each time a block begins.")] public BlockEvent onBlockBegin = new();
+        [UnityEngine.Tooltip(@"Items in this event will be triggered each time a block ends.")] public BlockEvent onBlockEnd = new();
+        [UnityEngine.Tooltip(@"Items in this event will be triggered when the session begins. Useful generating your trials & blocks, setting up the scene, and triggering the first trial.")] public SessionEvent onSessionBegin = new();
+        [UnityEngine.Tooltip(@"Items in this event will be triggered just as the session ends, after data has been written. It is safe to quit the application using this event. You should not perform manual data operations in this event.")] public SessionEvent onSessionEnd = new();
+        [UnityEngine.Tooltip(@"Items in this event will be triggered each time a trial begins. Useful for setting up the scene according to the settings in the trial (e.g. displaying stimuli).")] public TrialEvent onTrialBegin = new();
+        [UnityEngine.Tooltip(@"Items in this event will be triggered each time a trial ends. Useful for collecting results from the trial as well as showing feedback.")] public TrialEvent onTrialEnd = new();
+        public System.Collections.Generic.Dictionary<string, object> participantDetails;
+        public string ppid;
+        [UnityEngine.Tooltip(@"Items in this event will be triggered just before the session ends. Useful for performing any summary statistics, or writing any final session data. Do not use this event to quit the application, or data will be lost.")] public SessionEvent preSessionEnd = new();
+        [UnityEngine.Tooltip(@"If enabled, you do not need to reference this session component in a public field, you can simply call ""Session.instance"". This object will be destroyed if another session component is the main instance.")] public bool setAsMainInstance = true;
+        [SubjectNerd.Utilities.Reorderable] [UnityEngine.Tooltip(@"List of settings (independent variables) you wish to log to the behavioural data output for each trial.")] public System.Collections.Generic.List<string> settingsToLog = new();
+        [UnityEngine.Tooltip(@"Enable to save a copy of the session.participantDetails dictionary to the session folder as a .csv file. This is written just as the session begins.")] public bool storeParticipantDetails = true;
+        [UnityEngine.Tooltip(@"Enable to save a copy of the session.settings dictionary to the session folder as a .json file. This is written just as the session begins.")] public bool storeSessionSettings = true;
+        [SubjectNerd.Utilities.Reorderable] [UnityEngine.Tooltip(@"List of tracked objects. Add a tracker to a GameObject in your scene and set it here to track position and rotation of the object on each Update().")] public System.Collections.Generic.List<Tracker> trackedObjects = new();
+        public System.Collections.Generic.IEnumerable<DataHandler> ActiveDataHandlers { get; }
+        public string BasePath { get; }
+        public Block CurrentBlock { get; }
+        public Trial CurrentTrial { get; }
+        public string ExperimentPath { get; }
+        public Trial FirstTrial { get; }
+        public bool hasInitialised { get; }
+        public System.Collections.Generic.List<string> Headers { get; }
+        public bool InTrial { get; }
+        public bool isEnding { get; }
+        public Trial LastTrial { get; }
+        public Trial NextTrial { get; }
+        public string ParticipantPath { get; }
+        public Trial PrevTrial { get; }
+        public bool saveData { get; set; }
+        public Settings settings { get; }
+        public System.Collections.Generic.IEnumerable<Trial> Trials { get; }
+        public Session() {}
+        public void Begin(string experimentName, string participantId, int sessionNumber = 1, System.Collections.Generic.Dictionary<string, object> participantDetails = default(System.Collections.Generic.Dictionary<string, object>), Settings settings = default(Settings));
+        public void BeginNextTrial();
+        public void BeginNextTrialSafe();
+        public bool CheckDataTypeIsValid(string dataName, UXFDataType dataType);
+        public bool CheckSessionExists(string rootPath, string experimentName, string participantId, int sessionNumber);
+        public Block CreateBlock();
+        public Block CreateBlock(int numberOfTrials);
+        public void End();
+        public void EndCurrentTrial();
+        public void EndIfLastTrial(Trial trial);
+        public Block GetBlock(int blockNumber);
+        public Trial GetTrial();
+        public Trial GetTrial(int trialNumber);
+        public void SaveBytes(byte[] bytes, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
+        public void SaveDataTable(UXFDataTable table, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
+        public void SaveJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
+        public void SaveJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
+        public void SaveText(string text, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
+    }
+
+    public class SessionEvent : UnityEngine.Events.UnityEvent<Session>
+    {
+        public SessionEvent() {}
+    }
+
+    public static class SessionExtensions
+    {
+        public static void BuildFromTable(this Session session, UXFDataTable table, bool addSettingsToLog = true);
+    }
+
+    public class SessionLogger : UnityEngine.MonoBehaviour
+    {
+        public bool logDebugLogCalls = true;
+        public bool setAsMainInstance = true;
+        public static SessionLogger instance { get; }
+        public SessionLogger() {}
+        public void AttachReferences(Session newSession = default(Session));
+        public void Finalise(Session session);
+        public void Initialise();
+        public void Log(string text, string logType = @"user");
+    }
+
+    public class Settings
+    {
+        public System.Collections.Generic.Dictionary<string, object> baseDict { get; }
+        public static Settings empty { get; }
+        [System.Obsolete(@"Accessing settings with [] is no longer recommended - use new methods GetInt, GetFloat, GetString, GetDict, GetObject, and SetValue instead.")] public object this[string key] { get; set; }
+        public System.Collections.Generic.Dictionary<string, object>.KeyCollection Keys { get; }
+        public Settings() {}
+        public Settings(System.Collections.Generic.Dictionary<string, object> dict) {}
+        public bool ContainsKey(string key);
+        protected object Get(string key);
+        public bool GetBool(string key);
+        public bool GetBool(string key, bool valueIfNotFound);
+        public System.Collections.Generic.List<bool> GetBoolList(string key);
+        public System.Collections.Generic.List<bool> GetBoolList(string key, System.Collections.Generic.List<bool> valueIfNotFound);
+        public System.Collections.Generic.Dictionary<string, object> GetDict(string key);
+        public System.Collections.Generic.Dictionary<string, object> GetDict(string key, System.Collections.Generic.Dictionary<string, object> valueIfNotFound);
+        public System.Collections.Generic.List<System.Collections.Generic.Dictionary<string, object>> GetDictList(string key);
+        public System.Collections.Generic.List<System.Collections.Generic.Dictionary<string, object>> GetDictList(string key, System.Collections.Generic.List<System.Collections.Generic.Dictionary<string, object>> valueIfNotFound);
+        public double GetDouble(string key);
+        public double GetDouble(string key, double valueIfNotFound);
+        public System.Collections.Generic.List<double> GetDoubleList(string key);
+        public System.Collections.Generic.List<double> GetDoubleList(string key, System.Collections.Generic.List<double> valueIfNotFound);
+        public float GetFloat(string key);
+        public float GetFloat(string key, float valueIfNotFound);
+        public System.Collections.Generic.List<float> GetFloatList(string key);
+        public System.Collections.Generic.List<float> GetFloatList(string key, System.Collections.Generic.List<float> valueIfNotFound);
+        public int GetInt(string key);
+        public int GetInt(string key, int valueIfNotFound);
+        public System.Collections.Generic.List<int> GetIntList(string key);
+        public System.Collections.Generic.List<int> GetIntList(string key, System.Collections.Generic.List<int> valueIfNotFound);
+        public long GetLong(string key);
+        public long GetLong(string key, long valueIfNotFound);
+        public System.Collections.Generic.List<long> GetLongList(string key);
+        public System.Collections.Generic.List<long> GetLongList(string key, System.Collections.Generic.List<long> valueIfNotFound);
+        public object GetObject(string key);
+        public object GetObject(string key, object valueIfNotFound);
+        public System.Collections.Generic.List<object> GetObjectList(string key);
+        public System.Collections.Generic.List<object> GetObjectList(string key, System.Collections.Generic.List<object> valueIfNotFound);
+        public ISettingsContainer GetParent();
+        public string GetString(string key);
+        public string GetString(string key, string valueIfNotFound);
+        public System.Collections.Generic.List<string> GetStringList(string key);
+        public System.Collections.Generic.List<string> GetStringList(string key, System.Collections.Generic.List<string> valueIfNotFound);
+        protected void Set(string key, object value);
+        public void SetParent(ISettingsContainer parent);
+        public void SetValue(string key, object value);
+        public void UpdateWithDict(System.Collections.Generic.Dictionary<string, object> dict);
+    }
+
+    public class StringEvent : UnityEngine.Events.UnityEvent<string>
+    {
+        public StringEvent() {}
+    }
+
+    public abstract class Tracker : UnityEngine.MonoBehaviour
+    {
+        public string objectName;
+        [UnityEngine.Tooltip(@"When the measurements should be taken.Manual should only be selected if the user is calling the RecordRow method either from another script or a custom Tracker class.")] public TrackerUpdateType updateType;
+        public TrackerState CurrentState { get; }
+        public abstract System.Collections.Generic.IEnumerable<string> CustomHeader { get; }
+        public UXFDataTable Data { get; }
+        public string DataName { get; }
+        public abstract string MeasurementDescriptor { get; }
+        public bool Recording { get; }
+        protected Tracker() {}
+        protected abstract UXFDataRow GetCurrentValues();
+        public void PauseRecording();
+        public void RecordRow();
+        public void ResumeRecording();
+        public void StartRecording();
+        public void StopRecording();
+    }
+
+    public enum TrackerState
+    {
+        Recording = 0,
+        Paused = 1,
+        Stopped = 2,
+    }
+
+    public enum TrackerUpdateType
+    {
+        LateUpdate = 0,
+        FixedUpdate = 1,
+        Manual = 2,
+    }
+
+    public class Trial : IDataAssociatable, IExperimentUnit, ISettingsContainer
+    {
+        public Block block;
+        public ResultsDictionary result;
+        public TrialStatus status;
+        public int number { get; }
+        public int numberInBlock { get; }
+        public bool saveData { get; set; }
+        public Session session { get; }
+        public Settings settings { get; protected set; }
+        public void Begin();
+        public bool CheckDataTypeIsValid(string dataName, UXFDataType dataType);
+        public void End();
+        public static void ManageInWorker(System.Action action);
+        public void SaveBytes(byte[] bytes, string dataName, UXFDataType dataType = UXFDataType.OtherTrialData);
+        public void SaveDataTable(UXFDataTable table, string dataName, UXFDataType dataType = UXFDataType.OtherTrialData);
+        public void SaveJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string dataName, UXFDataType dataType = UXFDataType.OtherTrialData);
+        public void SaveJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string dataName, UXFDataType dataType = UXFDataType.OtherTrialData);
+        public void SaveText(string text, string dataName, UXFDataType dataType = UXFDataType.OtherTrialData);
+        public static void WaitForTasks();
+    }
+
+    public class TrialEvent : UnityEngine.Events.UnityEvent<Trial>
+    {
+        public TrialEvent() {}
+    }
+
+    public enum TrialStatus
+    {
+        NotDone = 0,
+        InProgress = 1,
+        Done = 2,
+    }
+
+    public static class Utilities
+    {
+        public static void UXFDebugLog(string message);
+        public static void UXFDebugLogError(string message);
+        public static void UXFDebugLogErrorFormat(string format, params object[] args);
+        public static void UXFDebugLogFormat(string format, params object[] args);
+        public static void UXFDebugLogWarning(string message);
+        public static void UXFDebugLogWarningFormat(string format, params object[] args);
+    }
+
+    public enum UXFDataLevel
+    {
+        PerTrial = 0,
+        PerSession = 1,
+    }
+
+    [System.Runtime.CompilerServices.TupleElementNames(new[] {@"columnName", @"value"})] public class UXFDataRow : System.Collections.Generic.List<System.ValueTuple<string, object>>
+    {
+        public System.Collections.Generic.IEnumerable<string> Headers { get; }
+        public UXFDataRow() {}
+    }
+
+    public class UXFDataTable
+    {
+        public string[] Headers { get; }
+        public UXFDataTable(params string[] columnNames) {}
+        public UXFDataTable(int capacity, params string[] columnNames) {}
+        public void AddCompleteRow(UXFDataRow newRow);
+        public int CountRows();
+        public static UXFDataTable FromCSV(string[] csvLines);
+        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<object>> GetAsDictOfList();
+        public System.Collections.Generic.List<System.Collections.Generic.Dictionary<string, object>> GetAsListOfDict();
+        public string[] GetCSVLines(System.Globalization.CultureInfo culture = default(System.Globalization.CultureInfo), string decimalFormat = @"0.######");
+    }
+
+    public enum UXFDataType
+    {
+        TrialResults = 0,
+        SessionLog = 1,
+        Settings = 2,
+        ParticipantDetails = 3,
+        Trackers = 4,
+        SummaryStatistics = 5,
+        OtherTrialData = 6,
+        OtherSessionData = 7,
+    }
+
+    public class WebAWSDynamoDB : DataHandler
+    {
+        [UnityEngine.Tooltip(@"Enable collect browser info from the participant, and store them in the session.participantDetails dictionary. (Key-value pairs are: ""screen_width"": int, ""screen_height"": int, ""user_agent"": string)")] public bool collectBrowserInfo = true;
+        [SubjectNerd.Utilities.EditScriptable] public AWSCredentials credentials;
+        [UnityEngine.Tooltip(@"Enable to intercept the closing of the browser tab or window and end the session, so that data is saved.")] public bool endSessionWhenTryCloseTab = true;
+        public WebAWSDynamoDB() {}
+        public override bool CheckIfRiskOfOverwrite(string experiment, string ppid, int sessionNum, string rootPath = @"");
+        public override void CleanUp();
+        public void GetCustomDataFromDB(string tableName, string primaryKeyName, object primaryKeyValue, System.Action<System.Collections.Generic.Dictionary<string, object>> callback, string optionalSortKeyName = @"", object optionalSortKeyValue = default(object));
+        public string GetFormattedPrimaryKeyValue(string ppid, int sessionNum, string dataName);
+        public void GetUXFDataFromDB(string experimentName, UXFDataType dataType, string ppid, int sessionNum, string dataName, System.Action<System.Collections.Generic.Dictionary<string, object>> callback, int optionalTrialNumber = 0);
+        public override string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum);
+        public override string HandleDataTable(UXFDataTable table, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum);
+        public override string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum);
+        public override bool IsCompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+        public override bool IsIncompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+        public void PutCustomDataInDB(string tableName, System.Collections.Generic.Dictionary<string, object> item);
+        public override void SetUp();
+    }
+}
+
+namespace UXF.EditorUtils
+{
+    public class CameraDisplayOverride : UnityEngine.MonoBehaviour
+    {
+        public CameraDisplayOverride() {}
+    }
+
+    public class Comment : UnityEngine.MonoBehaviour
+    {
+        public string comment;
+        public Comment() {}
+    }
+}
+
+namespace UXF.Examples
+{
+    public class ExampleCustomDataHandler : DataHandler
+    {
+        public ExampleCustomDataHandler() {}
+        public override bool CheckIfRiskOfOverwrite(string experiment, string ppid, int sessionNum, string rootPath = @"");
+        public override void CleanUp();
+        public override string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleDataTable(UXFDataTable table, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override void SetUp();
+    }
+}
+
+namespace UXF.UI
+{
+    [UnityEngine.ExecuteAlways] public class CheckboxElementSetup : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.Toggle content;
+        public CheckboxElementSetup() {}
+    }
+
+    public class ClickOutsidePanelEvent : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.Events.UnityEvent onClickOutsidePanel;
+        public ClickOutsidePanelEvent() {}
+    }
+
+    public class DownloadOrCopyHandler : DataHandler
+    {
+        public UnityEngine.Transform contentParent;
+        public UnityEngine.GameObject displayUI;
+        public bool trialResultsOnly = true;
+        public WebFileElement webFileElementPrefab;
+        public DownloadOrCopyHandler() {}
+        public override bool CheckIfRiskOfOverwrite(string experiment, string ppid, int sessionNum, string rootPath = @"");
+        public override void CleanUp();
+        public override string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleDataTable(UXFDataTable table, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleJSONSerializableObject(System.Collections.Generic.List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0);
+        public override bool IsCompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+        public override bool IsIncompatibleWith(UnityEditor.BuildTargetGroup buildTarget);
+        public override void SetUp();
+    }
+
+    public class DraggableUI : UnityEngine.MonoBehaviour, UnityEngine.EventSystems.IDragHandler, UnityEngine.EventSystems.IEventSystemHandler
+    {
+        public UnityEngine.Transform transformToRaise;
+        public UnityEngine.RectTransform visibleRect;
+        public DraggableUI() {}
+        public void OnDrag(UnityEngine.EventSystems.PointerEventData eventData);
+    }
+
+    [UnityEngine.ExecuteAlways] public class DropDownElementSetup : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.Dropdown content;
+        public DropDownElementSetup() {}
+        public void UpdateOptions(System.Collections.Generic.IEnumerable<string> options);
+        public void UpdateOptions(int selectedIdx, System.Collections.Generic.IEnumerable<string> options);
+    }
+
+    public class ExperimentProfileSelector : UnityEngine.MonoBehaviour
+    {
+        public FormElement dropdown;
+        public ExperimentProfileSelector() {}
+        public void Populate(bool retry = true);
+        public void ShowFolder();
+    }
+
+    public class FadeImage : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.AnimationCurve curve;
+        public float duration = 1f;
+        public UnityEngine.CanvasGroup group;
+        public FadeImage() {}
+        public void BeginFade();
+    }
+
+    public enum FormDataType
+    {
+        String = 0,
+        Float = 1,
+        Int = 2,
+        Bool = 3,
+        DropDown = 4,
+    }
+
+    public class FormElement : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.Text title;
+        public FormElement() {}
+        public void DisplayFault();
+        public object GetContents();
+        public void Initialise(System.Func<object> getContentsAction, System.Action<object> setContentsAction, System.Action<FormDataType> setDataTypeAction = default(System.Action<FormDataType>));
+        public void SetContents(object contents);
+        public void SetDataType(FormDataType formDataType);
+    }
+
+    public class FormElementEntry
+    {
+        [UnityEngine.Tooltip(@"The type of data you want this form element to collect.")] public FormDataType dataType = FormDataType.Int;
+        [UnityEngine.Tooltip(@"The name displayed in the UI.")] public string displayName = @"Enter your age";
+        public System.Collections.Generic.List<string> dropDownOptions;
+        [UnityEngine.Tooltip(@"The name used to access the value internally from the session.participantDetails dictionary.")] public string internalName = @"Age";
+        public FormElement element { get; set; }
+        public FormElementEntry() {}
+    }
+
+    public class InfoBarController : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.Text blockNum;
+        public UnityEngine.UI.Text folder;
+        public Session session;
+        public UnityEngine.UI.Text trialNum;
+        public UnityEngine.UI.Text trialStatus;
+        public InfoBarController() {}
+    }
+
+    public class InputFieldKeyboardReturnEvent : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.Events.UnityEvent onReturn;
+        public InputFieldKeyboardReturnEvent() {}
+    }
+
+    public class KeypressEvent : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.KeyCode eventKey = UnityEngine.KeyCode.F1;
+        public UnityEngine.Events.UnityEvent onKeypress;
+        public KeypressEvent() {}
+    }
+
+    public class LinkOpener : UnityEngine.MonoBehaviour
+    {
+        public LinkOpener() {}
+        public void OpenURL(string url);
+    }
+
+    public class LocalDirectorySelector : UnityEngine.MonoBehaviour
+    {
+        public FormElement inputField;
+        public LocalDirectorySelector() {}
+        public void SelectFolder();
+    }
+
+    public enum MessageType
+    {
+        Attention = 0,
+        Warning = 1,
+        Error = 2,
+    }
+
+    public class NotesController : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.GameObject contentParent;
+        public UnityEngine.UI.Toggle ignoreCheckbox;
+        public UnityEngine.UI.InputField newNoteInput;
+        public UnityEngine.GameObject notePrefab;
+        public UnityEngine.UI.ScrollRect notesScrollRect;
+        public UnityEngine.GameObject panel;
+        [UnityEngine.Space] public Session session;
+        public NotesController() {}
+        public void AddNewNote();
+        public void MoveScrollbarToBottom();
+        [UnityEngine.ContextMenu(@"Reset Notes Panel")] public void ResetNotes();
+        public void ToggleVisibility();
+    }
+
+    public struct Popup
+    {
+        public string message;
+        public MessageType messageType;
+        public System.Action onOK;
+    }
+
+    public class PopupController : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.Text popupMessage;
+        public UnityEngine.UI.Text popupTitle;
+        public PopupController() {}
+        public void CancelPress();
+        public void DisplayPopup(Popup popup);
+        public void OkPress();
+        [UnityEngine.ContextMenu(@"Test popup")] public void PopupTest();
+    }
+
+    public enum PPIDMode
+    {
+        AcquireFromUI = 0,
+        GenerateUnique = 1,
+    }
+
+    public class PPIDRandomGenerator : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.InputField inputField;
+        public PPIDRandomGenerator() {}
+        public void EnterRandom();
+    }
+
+    public enum SessionNumMode
+    {
+        AcquireFromUI = 0,
+        AlwaysSession1 = 1,
+    }
+
+    public enum SettingsMode
+    {
+        AcquireFromUI = 0,
+        DownloadFromURL = 1,
+        Empty = 2,
+    }
+
+    public enum StartupMode
+    {
+        BuiltInUI = 0,
+        Automatic = 1,
+        Manual = 2,
+    }
+
+    [UnityEngine.ExecuteAlways] public class TextElementSetup : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.InputField content;
+        public string initialText = @"";
+        public TextElementSetup() {}
+    }
+
+    [UnityEngine.DefaultExecutionOrder(100)] public class UIController : UnityEngine.MonoBehaviour
+    {
+        public FormElement checkBoxPrefab;
+        public FormElement dropDownPrefab;
+        [UnityEngine.Tooltip(@"Name of the experiment used in data output.")] public string experimentName = @"my_experiment";
+        public UnityEngine.Transform instructionsContentTransform;
+        [UnityEngine.Tooltip(@"The location of the settings profile file to download.")] public string jsonURL = @"https://gist.githubusercontent.com/jackbrookes/0f9770fcfe3d448e0f7a1973c2ac7419/raw/f2d234c92c77a817f9fc6390fcfcb39814c33d3c/example_settings.json";
+        public FormElement localFilePathElement;
+        [SubjectNerd.Utilities.Reorderable] public System.Collections.Generic.List<FormElementEntry> participantDataPoints = new();
+        public FormElement ppidElement;
+        [UnityEngine.Tooltip(@"How should the Participant ID be collected?")] public PPIDMode ppidMode;
+        public FormElement sessionNumElement;
+        [UnityEngine.Tooltip(@"Should the session number be acquired from the UI, or always be set to 1?")] public SessionNumMode sessionNumMode;
+        public FormElement settingsElement;
+        [UnityEngine.Tooltip(@"Where should the session settings be acquired from?")] public SettingsMode settingsMode;
+        [UnityEngine.Tooltip(@"The pattern used to search for settings profile files in the StreamingAssets folder.")] public string settingsSearchPattern = @"*.json";
+        public UnityEngine.Transform sidebarContentTransform;
+        [UnityEngine.Tooltip(@"How should the session be started? With the built-in UI, automatic start as soon as the scene is loaded, or manual start (useful if you want to build your own UI).")] public StartupMode startupMode;
+        [UnityEngine.TextArea] [UnityEngine.Tooltip(@"The text shown next to the terms and conditions checkbox.")] public string termsAndConditions = @"Please tick if you understand the instructions and agree for your data to be collected and used for research purposes.<color=red>*</color>";
+        public FormElement textPrefab;
+        [UnityEngine.Tooltip(@"Should the terms and conditions checkbox be pre-ticked?")] public bool tsAndCsInitialState;
+        public FormElement tsAndCsToggle;
+        [UnityEngine.Tooltip(@"Assign to a .txt file that contains one word per line. A random item in the list will be used for generating the PPID.")] public UnityEngine.TextAsset uuidWordList;
+        public System.Collections.Generic.IEnumerable<LocalFileDataHander> ActiveLocalFileDataHandlers { get; }
+        public bool RequiresFilePathElement { get; }
+        public UIController() {}
+        public void AutoBeginSession();
+        public bool DatapointsAreValid(out string reasonText);
+        public void GenerateSidebar();
+        public string GenerateUniquePPID();
+        public void LateValidate();
+        public bool LocalPathStateIsValid(out string reasonText);
+        public bool PPIDModeIsValid(out string reasonText);
+        public bool SettingsModeIsValid(out string reasonText);
+        public static bool SidebarItemIsValid(FormElementEntry entry, out object contents);
+        [return: System.Runtime.CompilerServices.TupleElementNames(new[] {@"entry", @"valid", @"invalidReason"})] public System.ValueTuple<FormElementEntry, bool, string>[] SidebarStateIsValid(out System.Collections.Generic.Dictionary<string, object> data);
+        public void TryBeginSessionFromUI();
+    }
+
+    public class WebFileElement : UnityEngine.MonoBehaviour
+    {
+        public UnityEngine.UI.Button copyBtn;
+        public UnityEngine.UI.Button downloadBtn;
+        public UnityEngine.UI.Text filenameText;
+        public WebFileElement() {}
+        public void Setup(string text, string filename);
+    }
+}

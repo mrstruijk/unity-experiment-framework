@@ -1,0 +1,142 @@
+// This file is generated. Do not modify by hand.
+// XML documentation file not found. To check if public methods have XML comments,
+// make sure the XML doc file is present and located next to the scraped dll
+namespace UXF.Tests
+{
+    public class TestBuildingFromCSV
+    {
+        public TestBuildingFromCSV() {}
+        [NUnit.Framework.Test] public void BuildFromTable();
+        [NUnit.Framework.Test] public void BuildFromTableWithBlankEntries();
+        [NUnit.Framework.Test] public void BuildFromTableWithBlockNum();
+        [NUnit.Framework.Test] public void BuildTableFromCSV();
+        [NUnit.Framework.Test] public void BuildTableFromCSVWithBlankEntries();
+        [NUnit.Framework.Test] public void BuildTableFromCSVWithoutBlankLastLine();
+        [NUnit.Framework.SetUp] public void SetUp();
+        [NUnit.Framework.TearDown] public void TearDown();
+    }
+
+    public class TestDataTable
+    {
+        public TestDataTable() {}
+        [NUnit.Framework.Test] public void DataTableCSV();
+    }
+
+    public class TestEvents
+    {
+        public TestEvents() {}
+        [NUnit.Framework.Test] public void SessionEndEvent();
+        [NUnit.Framework.SetUp] public void SetUp();
+        [NUnit.Framework.TearDown] public void TearDown();
+    }
+
+    public class TestFileSaver
+    {
+        public TestFileSaver() {}
+        [NUnit.Framework.Test] public void AbsolutePath();
+        [NUnit.Framework.Test] public void EarlyExit();
+        [NUnit.Framework.Test] public void FileSaverRelPath();
+        [NUnit.Framework.Test] public void PersistentDataPath();
+        [NUnit.Framework.SetUp] public void SetUp();
+        [NUnit.Framework.TearDown] public void TearDown();
+        [NUnit.Framework.Test] public void WriteManyFiles();
+    }
+
+    public class TestJSON
+    {
+        public TestJSON() {}
+        [NUnit.Framework.Test] public void JSONIndentation();
+        [NUnit.Framework.Test] public void VectorSerialize();
+    }
+
+    public class TestLocale
+    {
+        public TestLocale() {}
+        [NUnit.Framework.TearDown] public void TearDown();
+        [NUnit.Framework.Test] public void TestDE();
+        [NUnit.Framework.Test] public void TestGB();
+        public void TestSingleLocale(System.Globalization.CultureInfo culture);
+        [NUnit.Framework.Test] public void TestUS();
+    }
+
+    public class TestMultithreading
+    {
+        public TestMultithreading() {}
+        [NUnit.Framework.Test] public void AddSettingsDuringWriting();
+        [NUnit.Framework.SetUp] public void SetUp();
+        [NUnit.Framework.TearDown] public void TearDown();
+    }
+
+    public class TestSaveTrialData
+    {
+        public TestSaveTrialData() {}
+        [NUnit.Framework.Test] public void TestDoNotSaveSomeTrials();
+    }
+
+    public class TestSessionBehaviour
+    {
+        public TestSessionBehaviour() {}
+        [NUnit.Framework.Test] public void DuplicateHeaders();
+        [NUnit.Framework.Test] public void TestCurrentEndTrialOnBeginNext();
+        [NUnit.Framework.Test] public void TestDontEndOnDestroy();
+        [NUnit.Framework.Test] public void TestEndAfterLastTrial();
+        [NUnit.Framework.Test] public void TestEndMultipleTimes();
+        [NUnit.Framework.Test] public void TestEndOnDestroy();
+    }
+
+    public class TestSessionBuilding
+    {
+        public TestSessionBuilding() {}
+        [NUnit.Framework.Test] public void CreateBlocks();
+        [NUnit.Framework.Test] public void FirstLast();
+        [NUnit.Framework.Test] public void GetLastTrialWhenLastBlockEmpty();
+        [NUnit.Framework.Test] public void GetLastTrialWhenNoBlocks();
+        [NUnit.Framework.Test] public void GetLastTrialWhenNoTrials();
+        [NUnit.Framework.Test] public void InvalidBlockAccess();
+        [NUnit.Framework.Test] public void InvalidTrialAccess();
+        [NUnit.Framework.SetUp] public void SetUp();
+        [NUnit.Framework.Test] public void ShuffleBlocks();
+        [NUnit.Framework.Test] public void ShuffleTrials();
+        [NUnit.Framework.Test] public void SwapTrials();
+        [NUnit.Framework.TearDown] public void TearDown();
+    }
+
+    public class TestSettings
+    {
+        public TestSettings() {}
+        [NUnit.Framework.Test] public void CascadeSettings();
+        [NUnit.Framework.Test] public void CascadeSettingsWithDefault();
+        [NUnit.Framework.Test] public void CastListSettings();
+        [NUnit.Framework.Test] public void DeserializeJson();
+        [NUnit.Framework.Test] public void DictToSettings();
+        [NUnit.Framework.Test] public void GetSetSettings();
+    }
+
+    public class TestTrackers
+    {
+        public TestTrackers() {}
+        [NUnit.Framework.Test] public void AdHocTrackerAdd();
+        [NUnit.Framework.Test] public void DuplicateTrackersCausesError();
+        [NUnit.Framework.Test] public void RecordingException();
+        [NUnit.Framework.OneTimeSetUp] public void SetUp();
+        [NUnit.Framework.OneTimeTearDown] public void TearDown();
+        [NUnit.Framework.Test] public void TrackManyObjects();
+    }
+
+    public class TestTrials
+    {
+        public TestTrials() {}
+        [NUnit.Framework.Test] public void BeginTrialBeforeBeginSession();
+        [NUnit.Framework.Test] public void RunTrialsAdHocResultsAdd();
+        [NUnit.Framework.Test] public void RunTrialsAdHocResultsAddEarlyExit();
+        [NUnit.Framework.Test] public void WriteCommas();
+    }
+
+    public class TestUILogic
+    {
+        public TestUILogic() {}
+        [NUnit.Framework.SetUp] public void SetUp();
+        [NUnit.Framework.TearDown] public void TearDown();
+        [NUnit.Framework.Test] public void TestSettingsPPIDLogic();
+    }
+}

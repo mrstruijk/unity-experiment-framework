@@ -1,0 +1,16 @@
+{
+    "name": "UXF.Tests.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f3adc742e19ac47d8bc4f2391ff4910e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

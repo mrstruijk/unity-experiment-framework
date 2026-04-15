@@ -1,0 +1,249 @@
+// This file is generated. Do not modify by hand.
+// XML documentation file not found. To check if public methods have XML comments,
+// make sure the XML doc file is present and located next to the scraped dll
+[UnityEditor.CustomPropertyDrawer(typeof(BeginReadOnlyGroupAttribute))] public class BeginReadOnlyGroupDrawer : UnityEditor.DecoratorDrawer
+{
+    public BeginReadOnlyGroupDrawer() {}
+    public override float GetHeight();
+    public override void OnGUI(UnityEngine.Rect position);
+}
+
+[UnityEditor.CustomPropertyDrawer(typeof(EndReadOnlyGroupAttribute))] public class EndReadOnlyGroupDrawer : UnityEditor.DecoratorDrawer
+{
+    public EndReadOnlyGroupDrawer() {}
+    public override float GetHeight();
+    public override void OnGUI(UnityEngine.Rect position);
+}
+
+[UnityEditor.InitializeOnLoad] public class ExecutionOrderManager : UnityEditor.Editor
+{
+    public ExecutionOrderManager() {}
+}
+
+public class ExportUFXPackage : UnityEngine.MonoBehaviour
+{
+    public ExportUFXPackage() {}
+}
+
+[UnityEditor.CustomPropertyDrawer(typeof(ReadOnlyAttribute))] public class ReadOnlyDrawer : UnityEditor.PropertyDrawer
+{
+    public ReadOnlyDrawer() {}
+    public override float GetPropertyHeight(UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+    public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+}
+
+namespace BasteRainGames
+{
+    public static class Extensions
+    {
+        public static TValue GetOrAdd<TKey, TValue>(this System.Collections.Generic.Dictionary<TKey, TValue> dict, TKey key, System.Func<TValue> constructor);
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(HideIfAttribute))] public class HideIfAttributeDrawer : HidingAttributeDrawer
+    {
+        public HideIfAttributeDrawer() {}
+        public static bool ShouldDraw(UnityEditor.SerializedObject obj, HideIfAttribute attribute);
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(HideIfEnumValueAttribute))] public class HideIfEnumValueAttributeDrawer : HidingAttributeDrawer
+    {
+        public HideIfEnumValueAttributeDrawer() {}
+        public static bool ShouldDraw(UnityEditor.SerializedObject obj, HideIfEnumValueAttribute hideIfEnumValueAttribute);
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(HideIfNotNullAttribute))] public class HideIfNotNullAttributeDrawer : HidingAttributeDrawer
+    {
+        public HideIfNotNullAttributeDrawer() {}
+        public static bool ShouldDraw(UnityEditor.SerializedObject obj, HideIfNotNullAttribute hideIfNotNullAttribute);
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(HideIfNullAttribute))] public class HideIfNullAttributeDrawer : HidingAttributeDrawer
+    {
+        public HideIfNullAttributeDrawer() {}
+        public static bool ShouldDraw(UnityEditor.SerializedObject obj, HideIfNullAttribute hideIfNullAttribute);
+    }
+
+    public abstract class HidingAttributeDrawer : UnityEditor.PropertyDrawer
+    {
+        protected HidingAttributeDrawer() {}
+        public static bool CheckShouldHide(UnityEditor.SerializedProperty property);
+        public override float GetPropertyHeight(UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+        public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+    }
+
+    public class Utilities
+    {
+        public Utilities() {}
+        public static object GetTargetObjectOfProperty(UnityEditor.SerializedProperty prop);
+    }
+}
+
+namespace Merlin
+{
+    public class EasyEventEditorDrawer : UnityEditor.PropertyDrawer
+    {
+        public EasyEventEditorDrawer() {}
+        public override float GetPropertyHeight(UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+        public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+    }
+
+    [UnityEditor.InitializeOnLoad] public class EasyEventEditorHandler
+    {
+        public EasyEventEditorHandler() {}
+        public static void ApplyEventPropertyDrawerPatch(bool forceApply = false);
+        public static System.Type FindTypeInAllAssemblies(string qualifiedTypeName);
+        public static EasyEventEditorHandler.EEESettings GetEditorSettings();
+        public static void SetEditorSettings(EasyEventEditorHandler.EEESettings settings);
+        public class EEESettings
+        {
+            public bool displayArgumentType;
+            public bool groupSameComponentType;
+            public bool overrideEventDrawer;
+            public bool showInvokeField;
+            public bool showPrivateMembers;
+            public bool useHotkeys;
+            public EEESettings() {}
+        }
+    }
+
+    public class EasyEventEditorSettings : UnityEditor.EditorWindow
+    {
+        public EasyEventEditorSettings() {}
+    }
+}
+
+namespace SubjectNerd.Utilities
+{
+    [UnityEditor.CanEditMultipleObjects] [UnityEditor.CustomEditor(typeof(UnityEngine.Object), true, isFallback = true)] public class ReorderableArrayInspector : UnityEditor.Editor
+    {
+        protected bool alwaysDrawInspector;
+        protected System.Collections.Generic.Dictionary<string, ReorderableArrayInspector.ContextMenuData> contextData = new();
+        protected static bool FORCE_INIT;
+        protected bool hasEditable;
+        protected bool hasSortableArrays;
+        protected bool isInitialized;
+        public bool isSubEditor;
+        public ReorderableArrayInspector() {}
+        public void DrawContextMenuButtons();
+        protected virtual void DrawInspector();
+        public void DrawPropertiesAll();
+        public void DrawPropertiesExcept(params string[] propertyNames);
+        public void DrawPropertiesFrom(string propertyStart);
+        public void DrawPropertiesFromUpTo(string propertyStart, string propertyStop);
+        public void DrawPropertiesUpTo(string propertyStop);
+        protected void DrawPropertySortableArray(UnityEditor.SerializedProperty property);
+        protected override void Finalize();
+        protected void FindTargetProperties();
+        protected static string GetGrandParentPath(UnityEditor.SerializedProperty property);
+        protected UnityEditorInternal.ReorderableList GetSortableList(UnityEditor.SerializedProperty property);
+        protected virtual void InitInspector();
+        protected virtual void InitInspector(bool force);
+        protected bool InspectorGUIStart(bool force = false);
+        protected void IterateDrawProperty(UnityEditor.SerializedProperty property, System.Func<ReorderableArrayInspector.IterControl> filter = default(System.Func<ReorderableArrayInspector.IterControl>));
+        public override void OnInspectorGUI();
+        protected bool SetDragDropHandler(UnityEditor.SerializedProperty property, System.Action<UnityEditor.SerializedProperty, UnityEngine.Object[]> handler);
+        protected struct ContextMenuData
+        {
+            public System.Reflection.MethodInfo function;
+            public string menuItem;
+            public System.Reflection.MethodInfo validate;
+            public ContextMenuData(string item) {}
+        }
+        protected enum IterControl
+        {
+            Draw = 0,
+            Continue = 1,
+            Break = 2,
+        }
+        protected class SortableListData
+        {
+            public System.Func<int, string> ElementHeaderCallback;
+            public string Parent { get; }
+            public SortableListData(string parent) {}
+            public void AddProperty(UnityEditor.SerializedProperty property);
+            public bool DoLayoutProperty(UnityEditor.SerializedProperty property);
+            public int GetElementCount(UnityEditor.SerializedProperty property);
+            public UnityEditorInternal.ReorderableList GetPropertyList(UnityEditor.SerializedProperty property);
+            public void SetDropHandler(UnityEditor.SerializedProperty property, System.Action<UnityEditor.SerializedProperty, UnityEngine.Object[]> handler);
+        }
+    }
+}
+
+namespace UXF.EditorUtils
+{
+    [UnityEditor.CanEditMultipleObjects] [UnityEditor.CustomEditor(typeof(AWSCredentials), true)] public class AWSCredentialsEditor : UnityEditor.Editor
+    {
+        public AWSCredentialsEditor() {}
+        public void OnEnable();
+        public override void OnInspectorGUI();
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(UnityEditor.BuildTarget))] public class BuildTargetDrawer : UnityEditor.PropertyDrawer
+    {
+        public BuildTargetDrawer() {}
+        public override float GetPropertyHeight(UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+        public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+    }
+
+    [UnityEditor.CanEditMultipleObjects] [UnityEditor.CustomEditor(typeof(Comment), true)] public class CommentEditor : UnityEditor.Editor
+    {
+        public CommentEditor() {}
+        public override void OnInspectorGUI();
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(DataHandler))] public class DataHandlerDrawer : UnityEditor.PropertyDrawer
+    {
+        public DataHandlerDrawer() {}
+        public override float GetPropertyHeight(UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+        public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+    }
+
+    public static class EditorExtensions
+    {
+        public static void DrawProperty(this UnityEditor.Editor editor, string propertyName, bool includeChildren = true);
+        public static bool MiddleButton(string text, bool enabled = true);
+    }
+
+    [UnityEditor.CustomPropertyDrawer(typeof(UXF.UI.FormElementEntry))] public class FormElementEntryDrawer : UnityEditor.PropertyDrawer
+    {
+        public FormElementEntryDrawer() {}
+        public override float GetPropertyHeight(UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+        public override void OnGUI(UnityEngine.Rect position, UnityEditor.SerializedProperty property, UnityEngine.GUIContent label);
+    }
+
+    [UnityEditor.CanEditMultipleObjects] [UnityEditor.CustomEditor(typeof(Session), true)] public class SessionEditor : SubjectNerd.Utilities.ReorderableArrayInspector
+    {
+        public SessionEditor() {}
+        protected override void DrawInspector();
+        protected override void InitInspector();
+    }
+
+    [UnityEditor.CanEditMultipleObjects] [UnityEditor.CustomEditor(typeof(Tracker), true)] public class TrackerEditor : UnityEditor.Editor
+    {
+        public TrackerEditor() {}
+        public override void OnInspectorGUI();
+    }
+
+    [UnityEditor.CanEditMultipleObjects] [UnityEditor.CustomEditor(typeof(UXF.UI.UIController), true)] public class UIControllerEditor : SubjectNerd.Utilities.ReorderableArrayInspector
+    {
+        public UIControllerEditor() {}
+        protected override void DrawInspector();
+        public void DrawUIDisabledMessage();
+        public void HaltPlayIfUIIsInvalid(UnityEditor.PlayModeStateChange state);
+        protected override void InitInspector();
+    }
+
+    [UnityEditor.InitializeOnLoad] public class UXFSessionDisplay : UnityEditor.EditorWindow
+    {
+        public UXFSessionDisplay() {}
+        public void OnGUI();
+    }
+
+    [UnityEditor.InitializeOnLoad] public class UXFWizard : UnityEditor.EditorWindow
+    {
+        public static bool forceShow;
+        public UnityEngine.Texture2D uxfIcon;
+        public UXFWizard() {}
+        public void OnGUI();
+    }
+}
