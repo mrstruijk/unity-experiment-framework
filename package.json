@@ -1,0 +1,22 @@
+{
+  "name": "com.immersivecognition.uxf",
+  "version": "2.4.6",
+  "displayName": "Unity Experiment Framework",
+  "description": "Framework for creating human behaviour experiments in Unity ",
+  "documentationUrl": "https://immersivecognition.github.io/uxf-tutorial/",
+  "unity": "2019",
+  "dependencies": {
+    "com.unity.textmeshpro": "3.0.6"
+  },
+  "samples": [
+    {
+      "displayName": "Samples",
+      "description": "Contains samples of this package",
+      "path": "Samples~/Samples"
+    }
+  ],
+  "author": {
+    "name": "Immersive Cognition",
+    "url": "https://github.com/immersivecognition/unity-experiment-framework"
+  }
+}
