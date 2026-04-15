@@ -87,9 +87,21 @@ namespace UXF.UI
 
         public void ShowFolder()
         {
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-            string winPath = Application.streamingAssetsPath.Replace("/", "\\");
+            string path = Application.streamingAssetsPath;
+            
+            if (!Directory.Exists(path))
+            {
+                Utilities.UXFDebugLogErrorFormat("Directory does not exist: {0}", path);
+                return;
+            }
+            
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            string winPath = path.Replace("/", "\\");
             System.Diagnostics.Process.Start("explorer.exe", "/root," + winPath);
+#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+            System.Diagnostics.Process.Start("open", path);
+#elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
+            System.Diagnostics.Process.Start("xdg-open", path);
 #else
             Utilities.UXFDebugLogError("Cannot open directory unless on PC platform!");
 #endif
