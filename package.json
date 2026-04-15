@@ -13,6 +13,11 @@
       "displayName": "Samples",
       "description": "Contains samples of this package",
       "path": "Samples~/Samples"
+    },
+    {
+      "displayName": "Documentation",
+      "description": "Contains documentation of this package",
+      "path": "Samples~/docs"
     }
   ],
   "author": {
