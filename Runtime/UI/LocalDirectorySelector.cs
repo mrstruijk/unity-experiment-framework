@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.IO;
 using System.Collections;
@@ -11,7 +11,7 @@ namespace UXF.UI
 {
     public class LocalDirectorySelector : MonoBehaviour
     {
-        
+
         public FormElement inputField;
         UIController uiController;
         string dataLocKey = "uxf_datalocation";
@@ -19,7 +19,7 @@ namespace UXF.UI
         /// <summary>
         /// Awake is called when the script instance is being loaded.
         /// </summary>
-        void Awake()
+        private void Awake()
         {
             uiController = GetComponentInParent<UIController>();
         }
@@ -29,7 +29,7 @@ namespace UXF.UI
         /// Start is called on the frame when a script is enabled just before
         /// any of the Update methods is called the first time.
         /// </summary>
-        void Start()
+        private void Start()
         {
             if (PlayerPrefs.HasKey(dataLocKey))
             {
@@ -44,11 +44,50 @@ namespace UXF.UI
         public void SelectFolder()
         {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-            string current = (string) inputField.GetContents();
-            string[] selected = SFB.StandaloneFileBrowser.OpenFolderPanel("Select data directory", current, false);
-            if (selected != null && selected.Length > 0) inputField.SetContents(selected[0]);
+            string current = (string)inputField.GetContents();
+            if (string.IsNullOrEmpty(current) || !Directory.Exists(current))
+            {
+                current = Application.streamingAssetsPath;
+            }
+
+            try
+            {
+                string[] selected = SFB.StandaloneFileBrowser.OpenFolderPanel("Select data directory", current, false);
+                if (selected != null && selected.Length > 0)
+                    inputField.SetContents(selected[0]);
+            }
+            catch (System.DllNotFoundException)
+            {
+                Utilities.UXFDebugLogWarning(
+                    "Native file browser not available (Apple Silicon incompatibility). " +
+                    "Opening folder in system file explorer. Please copy your desired path and paste it into the text field.");
+
+                OpenFolderInExplorer(current);
+            }
+            catch (System.Exception ex)
+            {
+                Utilities.UXFDebugLogErrorFormat("Failed to open folder selection dialog: {0}", ex.Message);
+            }
 #else
             Utilities.UXFDebugLogError("Cannot select directory unless on PC platform!");
+#endif
+        }
+
+
+        public static void OpenFolderInExplorer(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                path = Application.streamingAssetsPath;
+            }
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            string winPath = path.Replace("/", "\\");
+            System.Diagnostics.Process.Start("explorer.exe", "/root," + winPath);
+#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+            System.Diagnostics.Process.Start("open", path);
+#elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
+            System.Diagnostics.Process.Start("xdg-open", path);
 #endif
         }
 
@@ -58,7 +97,7 @@ namespace UXF.UI
         /// </summary>
         void OnDestroy()
         {
-            string current = (string) inputField.GetContents();
+            string current = (string)inputField.GetContents();
             if (Directory.Exists(current))
             {
                 PlayerPrefs.SetString(dataLocKey, current);

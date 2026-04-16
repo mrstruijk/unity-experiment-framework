@@ -7,7 +7,21 @@ namespace SOSXR.UXF
     public class ExperimentGenerator : MonoBehaviour
     {
         [SerializeField] private ExperimentSettings m_settings;
+        [SerializeField] private bool m_autoGenerateSession = true;
+        private void OnEnable()
+        {
+            var session = Session.instance;
 
+            if (session == null)
+            {
+                return;
+            }
+
+            if (m_autoGenerateSession == true)
+            {
+                session.onSessionBegin.AddListener(GenerateSession);
+            }
+        }
 
         /// <summary>
         ///     This gets called from the OnSessionBegin event on the [UXF_Rig] GameObject.
@@ -55,6 +69,21 @@ namespace SOSXR.UXF
                 {
                     Debug.Log($"Our Block {block.number} has {setting.Key}:{setting.Value}");
                 }
+            }
+        }
+
+        private void OnDisable()
+        {
+            var session = Session.instance;
+
+            if (session == null)
+            {
+                return;
+            }
+
+            if (m_autoGenerateSession == true)
+            {
+                session.onSessionBegin.RemoveListener(GenerateSession);
             }
         }
     }

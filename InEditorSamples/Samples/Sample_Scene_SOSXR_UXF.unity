@@ -335,32 +335,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2442299798602729896, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
   m_PrefabInstance: {fileID: 232965541496903378}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &207062685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 207062684}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95659610c2d34404d9e2102ca542bfa8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UXF::SOSXR.UXF.ExperimentRunner
-  m_settings: {fileID: 11400000, guid: 5ec2dd8e3b3204a4c9b6613a438f7719, type: 2}
---- !u!114 &207062686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 207062684}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c228628acf0d64b899ecbaadbcb4c134, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UXF::SOSXR.UXF.ExperimentGenerator
-  m_settings: {fileID: 11400000, guid: 5ec2dd8e3b3204a4c9b6613a438f7719, type: 2}
 --- !u!1 &235808503 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7132162858610648436, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
@@ -691,7 +665,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2535794135564084902, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3821709553574915501, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
       propertyPath: m_AnchorMax.y
@@ -743,7 +717,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5560260460329060726, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
       propertyPath: m_Text
-      value: 1
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5741136684296479636, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
       propertyPath: m_AnchorMax.y
@@ -804,10 +778,6 @@ PrefabInstance:
     - target: {fileID: 7054784034568423046, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7132162858610648436, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7277731509141558918, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
       propertyPath: m_AnchorMax.x
@@ -843,18 +813,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8652865328622031212, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2442299798602729896, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 207062686}
-    - targetCorrespondingSourceObject: {fileID: 2442299798602729896, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 207062685}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5726848a3077e46b49e03a89f0192641, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
