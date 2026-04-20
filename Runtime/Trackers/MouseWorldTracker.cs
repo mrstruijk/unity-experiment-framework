@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UXF
@@ -22,20 +22,13 @@ namespace UXF
         /// Returns current mouse position in world coordinates
         /// </summary>
         /// <returns></returns>
-        protected override UXFDataRow GetCurrentValues()
+        protected override void GetCurrentValues(UXFDataRow row)
         {
-            // get position and rotation
             Vector3 p = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, distanceFromCamera));
 
-            // return position, rotation (x, y, z) as an array
-            var values = new UXFDataRow()
-            {
-                ("pos_x", p.x),
-                ("pos_y", p.y),
-                ("pos_z", p.z)
-            };
-
-            return values;
+            row.Add(("pos_x", p.x));
+            row.Add(("pos_y", p.y));
+            row.Add(("pos_z", p.z));
         }
     }
 }

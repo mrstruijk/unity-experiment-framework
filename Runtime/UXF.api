@@ -500,7 +500,7 @@ namespace UXF
         public override System.Collections.Generic.IEnumerable<string> CustomHeader { get; }
         public override string MeasurementDescriptor { get; }
         public MouseScreenTracker() {}
-        protected override UXFDataRow GetCurrentValues();
+        protected override void GetCurrentValues(UXFDataRow row);
     }
 
     public class MouseWorldTracker : Tracker
@@ -510,7 +510,7 @@ namespace UXF
         public override System.Collections.Generic.IEnumerable<string> CustomHeader { get; }
         public override string MeasurementDescriptor { get; }
         public MouseWorldTracker() {}
-        protected override UXFDataRow GetCurrentValues();
+        protected override void GetCurrentValues(UXFDataRow row);
     }
 
     public class NoSuchTrialException : System.Exception
@@ -525,7 +525,7 @@ namespace UXF
         public override System.Collections.Generic.IEnumerable<string> CustomHeader { get; }
         public override string MeasurementDescriptor { get; }
         public PositionRotationTracker() {}
-        protected override UXFDataRow GetCurrentValues();
+        protected override void GetCurrentValues(UXFDataRow row);
     }
 
     public class ResultsDictionary
@@ -595,6 +595,7 @@ namespace UXF
         public Block GetBlock(int blockNumber);
         public Trial GetTrial();
         public Trial GetTrial(int trialNumber);
+        public void RefreshActiveDataHandlers();
         public void SaveBytes(byte[] bytes, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
         public void SaveDataTable(UXFDataTable table, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
         public void SaveJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
@@ -690,7 +691,7 @@ namespace UXF
         public abstract string MeasurementDescriptor { get; }
         public bool Recording { get; }
         protected Tracker() {}
-        protected abstract UXFDataRow GetCurrentValues();
+        protected abstract void GetCurrentValues(UXFDataRow row);
         public void PauseRecording();
         public void RecordRow();
         public void ResumeRecording();

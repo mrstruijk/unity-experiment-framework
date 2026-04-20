@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
@@ -14,6 +14,9 @@ namespace UXF
     {
         private static string[] baseHeaders = new string[] { "time" };
         private TrackerState currentState = TrackerState.Stopped;
+
+        private static readonly Queue<UXFDataRow> _rowPool = new Queue<UXFDataRow>();
+        private const int MaxPoolSize = 100;
 
         /// <summary>
         /// Name of the object used in saving
@@ -118,9 +121,28 @@ namespace UXF
                 throw new System.InvalidOperationException(
                 "Tracker measurements cannot be taken when not recording!");
 
-            UXFDataRow newRow = GetCurrentValues();
-            newRow.Add(("time", Time.time));
-            Data.AddCompleteRow(newRow);
+            UXFDataRow row = GetPooledRow();
+            GetCurrentValues(row);
+            row.Add(("time", Time.time));
+            Data.AddCompleteRow(row);
+            ReturnRowToPool(row);
+        }
+
+        private static UXFDataRow GetPooledRow()
+        {
+            if (_rowPool.Count > 0)
+            {
+                var row = _rowPool.Dequeue();
+                row.Clear();
+                return row;
+            }
+            return new UXFDataRow();
+        }
+
+        private static void ReturnRowToPool(UXFDataRow row)
+        {
+            if (_rowPool.Count < MaxPoolSize)
+                _rowPool.Enqueue(row);
         }
 
         /// <summary>
@@ -179,10 +201,9 @@ namespace UXF
         }
 
         /// <summary>
-        /// Acquire values for this frame and store them in an UXFDataRow. Must return values for ALL columns.
+        /// Acquire values for this frame and add them to the provided UXFDataRow. Must add values for ALL custom columns.
         /// </summary>
-        /// <returns></returns>
-        protected abstract UXFDataRow GetCurrentValues();
+        protected abstract void GetCurrentValues(UXFDataRow row);
 
     }
 

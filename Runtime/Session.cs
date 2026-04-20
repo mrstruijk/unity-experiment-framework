@@ -238,7 +238,21 @@ namespace UXF
         /// <summary>
         /// Stores combined list of headers for the behavioural output.
         /// </summary>
-        public List<string> Headers { get { return baseHeaders.Concat(settingsToLog).Concat(customHeaders).Distinct().ToList(); } }
+        public List<string> Headers
+        {
+            get
+            {
+                if (_headersDirty || _cachedHeaders == null)
+                {
+                    _cachedHeaders = baseHeaders.Concat(settingsToLog).Concat(customHeaders).Distinct().ToList();
+                    _headersDirty = false;
+                }
+                return _cachedHeaders;
+            }
+        }
+
+        private List<string> _cachedHeaders;
+        private bool _headersDirty = true;
 
         /// <summary>
         /// Dictionary of objects for datapoints collected via the UI, or otherwise.
@@ -261,10 +275,22 @@ namespace UXF
         [Reorderable]
         public DataHandler[] dataHandlers = new DataHandler[]{};
 
+        private List<DataHandler> _activeDataHandlers = new List<DataHandler>();
+
+        public void RefreshActiveDataHandlers()
+        {
+            _activeDataHandlers.Clear();
+            foreach (var d in dataHandlers)
+            {
+                if (d != null && d.active && !_activeDataHandlers.Contains(d))
+                    _activeDataHandlers.Add(d);
+            }
+        }
+
         /// <summary>
         /// Get the currently selected dataHandlers for this session.
         /// </summary>
-        public IEnumerable<DataHandler> ActiveDataHandlers { get { return dataHandlers.Where(d => d != null && d.active).Distinct(); }}
+        public IEnumerable<DataHandler> ActiveDataHandlers => _activeDataHandlers;
          
         /// <summary>
         /// Should data be saved for this session?
@@ -337,6 +363,7 @@ namespace UXF
             this.settings = settings;
 
             // Initialise DataHandlers
+            RefreshActiveDataHandlers();
             foreach (var dataHandler in ActiveDataHandlers)
             {
                 try
@@ -352,6 +379,7 @@ namespace UXF
                     dataHandler.active = false;
                 }
             }
+            RefreshActiveDataHandlers();
             _hasInitialised = true;
 
             Utilities.UXFDebugLog("Beginning session.");

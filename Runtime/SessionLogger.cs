@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 
@@ -21,6 +22,7 @@ namespace UXF
         private Session session;
         private string[] header = new string[] { "timestamp", "log_type", "message" };
         private UXFDataTable table;
+        private readonly StringBuilder _sb = new StringBuilder();
 
         void Awake()
         {
@@ -57,8 +59,18 @@ namespace UXF
 
             row.Add(("timestamp", Time.time.ToString()));
             row.Add(("log_type", type.ToString()));
-            row.Add(("message", logString.Replace(",", string.Empty)));
-            row.Add(("stacktrace", stackTrace.Replace(",", string.Empty).Replace("\n", ".  ").Replace("\r", ".  ")));
+
+            _sb.Clear();
+            _sb.Append(logString ?? string.Empty);
+            _sb.Replace(",", string.Empty);
+            row.Add(("message", _sb.ToString()));
+
+            _sb.Clear();
+            _sb.Append(stackTrace ?? string.Empty);
+            _sb.Replace(",", string.Empty);
+            _sb.Replace("\n", ".  ");
+            _sb.Replace("\r", ".  ");
+            row.Add(("stacktrace", _sb.ToString()));
 
             table.AddCompleteRow(row);
         }

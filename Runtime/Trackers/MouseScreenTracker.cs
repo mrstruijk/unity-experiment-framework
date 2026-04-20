@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UXF
@@ -16,20 +16,12 @@ namespace UXF
         /// Returns current mouse position in screen coordinates
         /// </summary>
         /// <returns></returns>
-        protected override UXFDataRow GetCurrentValues()
+        protected override void GetCurrentValues(UXFDataRow row)
         {
-            // get position and rotation
             Vector2 p = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 
-
-            // return position, rotation (x, y, z) as an array
-            var values = new UXFDataRow()
-            {
-                ("pix_x", p.x),
-                ("pix_y", p.y)
-            };
-
-            return values;
+            row.Add(("pix_x", p.x));
+            row.Add(("pix_y", p.y));
         }
     }
 }
