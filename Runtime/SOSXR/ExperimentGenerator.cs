@@ -6,7 +6,7 @@ namespace SOSXR.UXF
 {
     public class ExperimentGenerator : MonoBehaviour
     {
-        [SerializeField] private ExperimentSettings m_settings;
+        // [SerializeField] private ExperimentSettings m_settings;
         [SerializeField] private bool m_autoGenerateSession = true;
 
         private void Start()
@@ -26,21 +26,23 @@ namespace SOSXR.UXF
 
         /// <summary>
         ///     This gets called from the OnSessionBegin event on the [UXF_Rig] GameObject.
-        ///     Set it in the Inspector of the Session component.
+        ///     Set it in the Inspector of the Session component if you set the m_autoGenerateSession to false.
         /// </summary>
         /// <param name="session"></param>
         public void GenerateSession(Session session)
         {
-            Debug.LogFormat($"Creating {m_settings.BlocksAmount} blocks with {m_settings.TrialsPerBlock} trials each");
-
             var startingBlock = 1;
-            var endingBlock = m_settings.BlocksAmount;
+            var endingBlock = session.GetSetting<int>("BlocksAmount");
+            var trialsPerBlock = session.GetSetting<int>("TrialsPerBlock");
+            var shuffleBlocks = session.GetSetting<bool>("ShuffleBlocks");
+
+            Debug.LogFormat($"Creating {endingBlock} blocks with {trialsPerBlock} trials each");
 
             session.settings.SetValue("sesh", 10); // You can set Settings on the Session-level: automatically logged to `settings.json`.
 
             for (var i = startingBlock; i <= endingBlock; i++)
             {
-                var block = session.CreateBlock(m_settings.TrialsPerBlock);
+                var block = session.CreateBlock(trialsPerBlock);
 
                 var isFirstHalf = i <= (endingBlock + startingBlock) / 2;
                 var isEvenBlock = i % 2 == 0;
@@ -60,7 +62,7 @@ namespace SOSXR.UXF
                 Debug.Log(i);
             }
 
-            if (m_settings.ShuffleBlocks)
+            if (shuffleBlocks)
             {
                 session.blocks.Shuffle();
                 Debug.Log("Shuffled blocks to new order");

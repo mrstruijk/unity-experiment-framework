@@ -11,9 +11,9 @@ namespace SOSXR.UXF
     /// </summary>
     public class SettingToUnityEventBool : SettingsResponder
     {
-        [SerializeField]  private bool m_value; // Just to for visuals in the Inspector
+        [SerializeField] private bool m_value; // Just to for visuals in the Inspector
 
-        
+
         public UnityEvent<bool> OnBlockBegin; // These UnityEvents will get invoked at the moments described there, but only if our Setting is registered for this Block (or Session)
         public UnityEvent<bool> OnTrialBegin; // Use the UnityEvents either with their value directly (in the dropdown in the Inspector they are then shown as "Dynamic"), discard the value, or mix-n-match.
         public UnityEvent<bool> OnTrialEnd;

@@ -11,15 +11,6 @@ public class EndReadOnlyGroupAttribute : UnityEngine.PropertyAttribute
     public EndReadOnlyGroupAttribute() {}
 }
 
-[UnityEngine.CreateAssetMenu(fileName = @"ExperimentSettings", menuName = @"SOSXR/UXF/ExperimentSettings")] public class ExperimentSettings : UnityEngine.ScriptableObject
-{
-    public int BlocksAmount { get; }
-    public bool ShuffleBlocks { get; }
-    public int StartNextTrialDelayMS { get; }
-    public int TrialsPerBlock { get; }
-    public ExperimentSettings() {}
-}
-
 [System.AttributeUsage(System.AttributeTargets.Field)] public class InspectorButtonAttribute : UnityEngine.PropertyAttribute
 {
     public static float kDefaultButtonWidth = 240f;
@@ -286,6 +277,7 @@ namespace SOSXR.UXF
         public static UXF.Trial GetLastTrialInBlock(this UXF.Block block);
         public static System.Collections.Generic.Dictionary<string, object> GetSessionSettings(this UXF.Session session);
         public static T GetSetting<T>(this UXF.Block block, string key);
+        public static T GetSetting<T>(this UXF.Session session, string key);
         public static System.Collections.Generic.Dictionary<string, object> GetSettings(this UXF.Block block);
         public static bool HasSetting(this UXF.Block block, string key);
         public static bool HasSetting(this UXF.Session session, string key);
@@ -596,6 +588,7 @@ namespace UXF
         public Trial GetTrial();
         public Trial GetTrial(int trialNumber);
         public void RefreshActiveDataHandlers();
+        public void RefreshTrialsCache();
         public void SaveBytes(byte[] bytes, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
         public void SaveDataTable(UXFDataTable table, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
         public void SaveJSONSerializableObject(System.Collections.Generic.Dictionary<string, object> serializableObject, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData);
@@ -899,6 +892,8 @@ namespace UXF.UI
     public class ExperimentProfileSelector : UnityEngine.MonoBehaviour
     {
         public FormElement dropdown;
+        public PathSelector pathSelector;
+        public string profilePath { get; }
         public ExperimentProfileSelector() {}
         public void Populate(bool retry = true);
         public void ShowFolder();
@@ -1001,6 +996,12 @@ namespace UXF.UI
         public void MoveScrollbarToBottom();
         [UnityEngine.ContextMenu(@"Reset Notes Panel")] public void ResetNotes();
         public void ToggleVisibility();
+    }
+
+    public enum PathSelector
+    {
+        PersistentDataPath = 0,
+        StreamingAssets = 1,
     }
 
     public struct Popup

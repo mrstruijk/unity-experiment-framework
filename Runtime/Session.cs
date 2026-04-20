@@ -253,6 +253,7 @@ namespace UXF
 
         private List<string> _cachedHeaders;
         private bool _headersDirty = true;
+        private List<Trial> _trialsCache = new List<Trial>();
 
         /// <summary>
         /// Dictionary of objects for datapoints collected via the UI, or otherwise.
@@ -291,6 +292,16 @@ namespace UXF
         /// Get the currently selected dataHandlers for this session.
         /// </summary>
         public IEnumerable<DataHandler> ActiveDataHandlers => _activeDataHandlers;
+
+        /// <summary>
+        /// Rebuilds the flat trials cache from all blocks. Call this after modifying block/trial structure.
+        /// </summary>
+        public void RefreshTrialsCache()
+        {
+            _trialsCache.Clear();
+            foreach (var block in blocks)
+                _trialsCache.AddRange(block.trials);
+        }
          
         /// <summary>
         /// Should data be saved for this session?
@@ -386,6 +397,7 @@ namespace UXF
 
             // raise the session events
             onSessionBegin.Invoke(this);
+            RefreshTrialsCache();
         }
 
         /// <summary>
@@ -421,7 +433,7 @@ namespace UXF
             {
                 throw new NoSuchTrialException("There is no trial zero. Did you try to perform operations on the current trial before the first one started? If you are the start of the experiment please use NextTrial to get the first trial. ");
             }
-            return Trials.ToList()[currentTrialNum - 1];
+            return _trialsCache[currentTrialNum - 1];
         }
 
         /// <summary>
@@ -430,7 +442,7 @@ namespace UXF
         /// <returns></returns>
         public Trial GetTrial(int trialNumber)
         {
-            return Trials.ToList()[trialNumber - 1];
+            return _trialsCache[trialNumber - 1];
         }
 
         /// <summary>
@@ -442,7 +454,7 @@ namespace UXF
             // non zero indexed
             try
             {
-                return Trials.ToList()[currentTrialNum];
+                return _trialsCache[currentTrialNum];
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -497,7 +509,7 @@ namespace UXF
             try
             {
                 // non zero indexed
-                return Trials.ToList()[currentTrialNum - 2];
+                return _trialsCache[currentTrialNum - 2];
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -724,6 +736,7 @@ namespace UXF
                 currentTrialNum = 0;
                 currentBlockNum = 0;
                 blocks = new List<Block>();
+                _trialsCache.Clear();
                 _hasInitialised = false;
 
                 Utilities.UXFDebugLog("Ended session.");
@@ -735,16 +748,18 @@ namespace UXF
         {
             Trial.WaitForTasks();
 
+            List<Trial> trialsList = Trials.ToList();
+
             // generate list of all headers possible
             // hashset keeps unique set of keys
             HashSet<string> resultsHeaders = new HashSet<string>();
-            foreach (Trial t in Trials)
+            foreach (Trial t in trialsList)
                 if (t.result != null && t.saveData)
                     foreach (string key in t.result.Keys)
                         resultsHeaders.Add(key);
 
-            UXFDataTable table = new UXFDataTable(Trials.Count(), resultsHeaders.ToArray());
-            foreach (Trial t in Trials)
+            UXFDataTable table = new UXFDataTable(trialsList.Count, resultsHeaders.ToArray());
+            foreach (Trial t in trialsList)
             {
                 if (t.result != null && t.saveData)
                 {

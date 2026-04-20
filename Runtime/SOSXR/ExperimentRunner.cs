@@ -7,7 +7,7 @@ namespace SOSXR.UXF
     [RequireComponent(typeof(Session))]
     public class ExperimentRunner : MonoBehaviour
     {
-        [SerializeField] private ExperimentSettings m_settings;
+        // [SerializeField] private ExperimentSettings m_settings;
 
         private Session _session;
 
@@ -102,10 +102,11 @@ namespace SOSXR.UXF
 
                 return;
             }
+            var StartNextTrialDelayMS = _session.GetSetting<int>("StartNextTrialDelayMS");
 
-            if (m_settings.StartNextTrialDelayMS >= 0)
+            if (StartNextTrialDelayMS >= 0)
             {
-                var delaySecs = m_settings.StartNextTrialDelayMS / 1000;
+                var delaySecs = StartNextTrialDelayMS / 1000;
 
                 Debug.Log($"Auto-starting next Trial in {delaySecs} seconds");
 

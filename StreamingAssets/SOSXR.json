@@ -1,0 +1,6 @@
+{
+  "BlocksAmount": 5,
+  "TrialsPerBlock": 2,
+  "ShuffleBlocks": true,
+  "StartNextTrialDelayMS": 250
+}

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.IO;
 using System.Collections;
@@ -9,26 +9,43 @@ using UnityEngine.UI;
 
 namespace UXF.UI
 {
+    public enum PathSelector
+    {
+        PersistentDataPath,
+        StreamingAssets
+    }
+
     public class ExperimentProfileSelector : MonoBehaviour
     {
-        
+
         public FormElement dropdown;
         UIController uiController;
         string profileKey = "uxf_profile";
 
-        /// <summary>
-        /// Awake is called when the script instance is being loaded.
-        /// </summary>
+        public string profilePath { get; private set; }
+
+        public PathSelector pathSelector = PathSelector.PersistentDataPath;
+
         void Awake()
         {
             uiController = GetComponentInParent<UIController>();
+
+            if (pathSelector == PathSelector.PersistentDataPath)
+            {
+                profilePath = Application.persistentDataPath;
+            }
+            else if (pathSelector == PathSelector.StreamingAssets)
+            {
+                profilePath = Application.streamingAssetsPath;
+                Debug.Log("Please note that there can only be 1 StreamingAssetsPath, which needs to be directly in 'Assets'");
+            }
+            else
+            {
+                Debug.LogWarning("No other path has been configured yet");
+            }
         }
 
 
-        /// <summary>
-        /// Start is called on the frame when a script is enabled just before
-        /// any of the Update methods is called the first time.
-        /// </summary>
         void Start()
         {
             Populate();
@@ -37,13 +54,14 @@ namespace UXF.UI
 
         public void Populate(bool retry = true)
         {
-            if (!Directory.Exists(Application.streamingAssetsPath))
+            if (!Directory.Exists(profilePath))
             {
-                Utilities.UXFDebugLogWarning("StreamingAssets folder was moved or deleted! Creating a new one.");
-                Directory.CreateDirectory(Application.streamingAssetsPath);
+                Utilities.UXFDebugLogWarning($"SettingsProfile path {profilePath} folder was moved or deleted! Creating a new one.");
+
+                Directory.CreateDirectory(profilePath);
             }
 
-            var profileNames = Directory.GetFiles(Application.streamingAssetsPath, uiController.settingsSearchPattern)
+            var profileNames = Directory.GetFiles(profilePath, uiController.settingsSearchPattern)
                 .Select(f => Path.GetFileName(f))
                 .ToList();
 
@@ -74,12 +92,13 @@ namespace UXF.UI
             else
             {
                 string newName = uiController.settingsSearchPattern.Replace("*", "my_experiment");
-                string newPath = Path.Combine(Application.streamingAssetsPath, newName);
+                string newPath = Path.Combine(profilePath, newName);
                 if (!File.Exists(newPath))
                 {
                     File.WriteAllText(newPath, "{\n}");
-                    Utilities.UXFDebugLogErrorFormat("No profiles found in {0} that match search pattern {1}. A blank one called {2} has been made for you.", Application.streamingAssetsPath, uiController.settingsSearchPattern, newName);
-                    if (retry) Populate(retry: false);
+                    Utilities.UXFDebugLogWarningFormat("No profiles found in {0} that match search pattern {1}. A blank one called {2} has been made for you.", profilePath, uiController.settingsSearchPattern, newName);
+                    if (retry)
+                        Populate(retry: false);
                 }
             }
         }
@@ -87,14 +106,14 @@ namespace UXF.UI
 
         public void ShowFolder()
         {
-            string path = Application.streamingAssetsPath;
-            
+            string path = profilePath;
+
             if (!Directory.Exists(path))
             {
-                Utilities.UXFDebugLogErrorFormat("Directory does not exist: {0}", path);
+                Utilities.UXFDebugLogWarningFormat("Directory does not exist: {0}", path);
                 return;
             }
-            
+
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             string winPath = path.Replace("/", "\\");
             System.Diagnostics.Process.Start("explorer.exe", "/root," + winPath);
@@ -112,10 +131,8 @@ namespace UXF.UI
         /// </summary>
         void OnDestroy()
         {
-            string current = (string) dropdown.GetContents();
+            string current = (string)dropdown.GetContents();
             PlayerPrefs.SetString(profileKey, current);
         }
-
     }
-
 }

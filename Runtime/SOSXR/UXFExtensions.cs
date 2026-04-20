@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UXF;
 
@@ -222,14 +223,46 @@ namespace SOSXR.UXF
         public static T GetSetting<T>(this Block block, string key)
         {
             if (!block.HasSetting(key))
-            {
                 return default;
-            }
 
             var value = block.settings.baseDict[key];
 
-            return (T)value;
+            if (value is T typedValue)
+                return typedValue;
+
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T)); // Is used to attempt to convert functionally equivalent types (long > int | int64 > int32 | etc)
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Could not convert {value?.GetType()} to {typeof(T)}: {e.Message}");
+                return default;
+            }
         }
+
+
+        public static T GetSetting<T>(this Session session, string key)
+        {
+            if (!session.HasSetting(key))
+                return default;
+
+            var value = session.settings.baseDict[key];
+
+            if (value is T typedValue)
+                return typedValue;
+
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T)); // Is used to attempt to convert functionally equivalent types (long > int | int64 > int32 | etc)
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Could not convert {value?.GetType()} to {typeof(T)}: {e.Message}");
+                return default;
+            }
+        }
+
 
 
         /// <summary>

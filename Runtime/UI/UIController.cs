@@ -51,7 +51,8 @@ namespace UXF.UI
         {
             get
             {
-                if (session == null) return false;
+                if (session == null)
+                    return false;
                 return session.ActiveDataHandlers
                     .Where((dh) => dh is LocalFileDataHander)
                     .Any(dh => ((LocalFileDataHander)dh).dataSaveLocation == DataSaveLocation.AcquireFromUI);
@@ -102,9 +103,12 @@ namespace UXF.UI
         /// </summary>
         void OnValidate()
         {
-            if (session == null) session = GetComponentInParent<Session>();
-            if (canvas == null) canvas = GetComponent<Canvas>();
-            if (popupController == null) popupController = GetComponentInChildren<PopupController>(true);
+            if (session == null)
+                session = GetComponentInParent<Session>();
+            if (canvas == null)
+                canvas = GetComponent<Canvas>();
+            if (popupController == null)
+                popupController = GetComponentInChildren<PopupController>(true);
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.delayCall += LateValidate;
             foreach (var dh in ActiveLocalFileDataHandlers)
@@ -130,23 +134,28 @@ namespace UXF.UI
 
         void UpdateUIState()
         {
-            if (settingsElement != null) canvas.enabled = (startupMode == StartupMode.BuiltInUI);
+            if (settingsElement != null)
+                canvas.enabled = (startupMode == StartupMode.BuiltInUI);
         }
 
         void UpdateExperimentProfileElementState()
         {
-            if (settingsElement != null) settingsElement.gameObject.SetActive(settingsMode == SettingsMode.AcquireFromUI);
+            if (settingsElement != null)
+                settingsElement.gameObject.SetActive(settingsMode == SettingsMode.AcquireFromUI);
         }
 
         void UpdateLocalFileElementState()
         {
-            if (localFilePathElement != null) localFilePathElement.gameObject.SetActive(RequiresFilePathElement);
+            if (localFilePathElement != null)
+                localFilePathElement.gameObject.SetActive(RequiresFilePathElement);
         }
 
         void UpdatePPIDSessionNumElementState()
         {
-            if (ppidElement != null) ppidElement.gameObject.SetActive(ppidMode == PPIDMode.AcquireFromUI);
-            if (sessionNumElement != null) sessionNumElement.gameObject.SetActive(ppidMode == PPIDMode.AcquireFromUI && sessionNumMode == SessionNumMode.AcquireFromUI);
+            if (ppidElement != null)
+                ppidElement.gameObject.SetActive(ppidMode == PPIDMode.AcquireFromUI);
+            if (sessionNumElement != null)
+                sessionNumElement.gameObject.SetActive(ppidMode == PPIDMode.AcquireFromUI && sessionNumMode == SessionNumMode.AcquireFromUI);
         }
 
 
@@ -155,11 +164,15 @@ namespace UXF.UI
         /// </summary>
         void Awake()
         {
-            if (session == null) session = GetComponentInParent<Session>();
-            if (canvas == null) canvas = GetComponent<Canvas>();
-            if (popupController == null) popupController = GetComponentInChildren<PopupController>(true);
+            if (session == null)
+                session = GetComponentInParent<Session>();
+            if (canvas == null)
+                canvas = GetComponent<Canvas>();
+            if (popupController == null)
+                popupController = GetComponentInChildren<PopupController>(true);
             // read word list
-            if (uuidWordList) words = uuidWordList.text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            if (uuidWordList)
+                words = uuidWordList.text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             GenerateSidebar();
         }
 
@@ -174,13 +187,15 @@ namespace UXF.UI
             UpdateLocalFileElementState();
             UpdatePPIDSessionNumElementState();
             UpdateUIState();
-            if (startupMode == StartupMode.Automatic) AutoBeginSession();
+            if (startupMode == StartupMode.Automatic)
+                AutoBeginSession();
         }
 
 
         public void AutoBeginSession()
         {
-            if (autoStartRoutine == null) autoStartRoutine = StartCoroutine(AutoBeginSessionSequence());
+            if (autoStartRoutine == null)
+                autoStartRoutine = StartCoroutine(AutoBeginSessionSequence());
         }
 
         IEnumerator AutoBeginSessionSequence()
@@ -211,7 +226,8 @@ namespace UXF.UI
 
         public void TryBeginSessionFromUI()
         {
-            if (uiStartRoutine == null) uiStartRoutine = StartCoroutine(TryBeginSessionFromUISequence());
+            if (uiStartRoutine == null)
+                uiStartRoutine = StartCoroutine(TryBeginSessionFromUISequence());
         }
 
         IEnumerator TryBeginSessionFromUISequence()
@@ -309,9 +325,11 @@ namespace UXF.UI
             foreach (var v in validityList)
             {
                 sidebarValid = sidebarValid && v.valid;
-                if (!v.valid && v.entry.element != null) v.entry.element.DisplayFault();
+                if (!v.valid && v.entry.element != null)
+                    v.entry.element.DisplayFault();
             }
-            if (!sidebarValid) error = true;
+            if (!sidebarValid)
+                error = true;
 
             // TERMS AND CONDITIONS
             bool acceptedTsAndCs = (bool)tsAndCsToggle.GetContents();
@@ -327,7 +345,8 @@ namespace UXF.UI
             switch (settingsMode)
             {
                 case SettingsMode.AcquireFromUI:
-                    string settingsPath = Path.Combine(Application.streamingAssetsPath, settingsElement.GetContents().ToString());
+                    var experimentProfileSelector = FindFirstObjectByType<ExperimentProfileSelector>();
+                    string settingsPath = Path.Combine(experimentProfileSelector?.profilePath, settingsElement.GetContents().ToString());
                     string settingsText;
                     try
                     {
@@ -379,7 +398,8 @@ namespace UXF.UI
             }
 
             uiStartRoutine = null;
-            if (error) yield break;
+            if (error)
+                yield break;
 
             bool exists = session.CheckSessionExists(
                 localFilePath,
@@ -399,7 +419,8 @@ namespace UXF.UI
                         sessionNum
                     ),
                     messageType = MessageType.Warning,
-                    onOK = () => {
+                    onOK = () =>
+                    {
                         gameObject.SetActive(false);
                         // BEGIN!
                         session.Begin(
@@ -427,13 +448,14 @@ namespace UXF.UI
                 );
             }
 
-            
+
         }
 
         public string GenerateUniquePPID()
         {
             string prefix = string.Empty;
-            if (words != null) prefix = words[UnityEngine.Random.Range(0, words.Length - 1)] + "-";
+            if (words != null)
+                prefix = words[UnityEngine.Random.Range(0, words.Length - 1)] + "-";
             string ppid = Guid.NewGuid().ToString();
             return Extensions.GetSafeFilename(prefix + ppid);
         }
@@ -447,11 +469,16 @@ namespace UXF.UI
 
             foreach (Transform child in children)
             {
-                if (ReferenceEquals(settingsElement.transform, child)) continue;
-                else if (ReferenceEquals(ppidElement.transform, child)) continue;
-                else if (ReferenceEquals(localFilePathElement.transform, child)) continue;
-                else if (ReferenceEquals(sessionNumElement.transform, child)) continue;
-                else DestroyImmediate(child.gameObject);
+                if (ReferenceEquals(settingsElement.transform, child))
+                    continue;
+                else if (ReferenceEquals(ppidElement.transform, child))
+                    continue;
+                else if (ReferenceEquals(localFilePathElement.transform, child))
+                    continue;
+                else if (ReferenceEquals(sessionNumElement.transform, child))
+                    continue;
+                else
+                    DestroyImmediate(child.gameObject);
             }
 
             foreach (FormElementEntry entry in participantDataPoints)
