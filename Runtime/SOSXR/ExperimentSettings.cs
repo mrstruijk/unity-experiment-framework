@@ -5,7 +5,6 @@
 public class ExperimentSettings : ScriptableObject
 {
     [SerializeField][Min(1)] private int m_blocksAmount = 5;
-
     [SerializeField] private bool m_shuffleBlocks = true;
 
     [SerializeField][Min(1)] private int m_trialsPerBlock = 2;

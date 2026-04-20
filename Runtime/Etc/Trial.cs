@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +21,14 @@ namespace UXF
         /// <summary>
         /// Returns non-zero indexed trial number. This is generated based on its position in the block, and the ordering of the blocks within the session.
         /// </summary>
-        public int number { get { return session.Trials.ToList().IndexOf(this) + 1; } }
+        public int number
+        {
+            get
+            {
+                if (_number == 0) _number = session.Trials.ToList().IndexOf(this) + 1;
+                return _number;
+            }
+        }
 
         /// <summary>
         /// Returns non-zero indexed trial number for the current block.
@@ -38,6 +45,7 @@ namespace UXF
         /// </summary>
         public Block block;
         float startTime, endTime;
+        int _number;
 
         /// <summary>
         /// The session associated with this trial
@@ -67,7 +75,8 @@ namespace UXF
         // Used by the worker task
         private static BlockingQueue<System.Action> blockingQueue = new BlockingQueue<System.Action>();
         private static Task workerTask;
-        private static bool quitting = false;
+        private static volatile bool quitting = false;
+        private static readonly object _workerLock = new object();
 
         /// <summary>
         /// Manually create a trial. When doing this you need to add this trial to a block with block.trials.Add(trial)
@@ -312,10 +321,13 @@ namespace UXF
         /// <param name="action"></param>
         public static void ManageInWorker(System.Action action)
         {
-            if (workerTask == null)
+            lock (_workerLock)
             {
-                workerTask = Task.Run(Worker);
-                quitting = false;
+                if (workerTask == null || workerTask.IsCompleted)
+                {
+                    quitting = false;
+                    workerTask = Task.Run(Worker);
+                }
             }
 
             blockingQueue.Enqueue(action);
@@ -362,7 +374,14 @@ namespace UXF
             Utilities.UXFDebugLog("Waiting for tasks to finish");
             quitting = true;
             blockingQueue.Enqueue(() => {}); // ensures bq breaks from foreach loop
-            workerTask?.Wait();
+
+            Task taskToWait;
+            lock (_workerLock)
+            {
+                taskToWait = workerTask;
+            }
+
+            taskToWait?.Wait();
             Utilities.UXFDebugLog("Tasks finished");
         }
     }

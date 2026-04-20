@@ -14,7 +14,7 @@ namespace UXF
         /// List of trials associated with this block
         /// </summary>
         public List<Trial> trials = new List<Trial>();
-        
+
         /// <summary>
         /// Return the first trial in this block
         /// </summary>
@@ -23,10 +23,11 @@ namespace UXF
         /// <summary>
         /// Return the last trial in this block
         /// </summary>
-        public Trial lastTrial { get { return trials.Count > 0 ? trials[trials.Count-1] : null; } }
+        public Trial lastTrial { get { return trials.Count > 0 ? trials[trials.Count - 1] : null; } }
 
         /// <summary>
-        /// Returns the block number of this block, based on its position in the session.
+        /// Returns the block number of this block
+        /// Even though this may be inefficient (O(n) search), UXF this to be here, and not cached.
         /// </summary>
         public int number { get { return session.blocks.IndexOf(this) + 1; } }
 

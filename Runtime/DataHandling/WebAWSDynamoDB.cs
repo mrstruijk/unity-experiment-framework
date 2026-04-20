@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -80,7 +80,7 @@ namespace UXF
         {
             bool ok = CheckCurrentTargetOK();
             if (!ok) return;
-            if (credentials == null) Utilities.UXFDebugLogError("Credentials have not been set!");
+            if (credentials == null) { Utilities.UXFDebugLogError("Credentials have not been set!"); return; }
             DDB_Setup(credentials.region, credentials.cognitoIdentityPool, gameObject.name);
             
             var allDataTypes = Enum.GetValues(typeof(UXFDataType)); 
@@ -98,7 +98,12 @@ namespace UXF
         void AddBrowserInfo()
         {
             string data = GetUserInfo();
-            Dictionary<string, object> userInfo = (Dictionary<string, object>) MiniJSON.Json.Deserialize(data);
+            object userInfoObj = MiniJSON.Json.Deserialize(data);
+            if (!(userInfoObj is Dictionary<string, object> userInfo))
+            {
+                Utilities.UXFDebugLogError("AddBrowserInfo: Failed to deserialize browser info - result was not a valid dictionary.");
+                return;
+            }
             foreach (var kvp in userInfo)
             {
                 if (!session.participantDetails.ContainsKey(kvp.Key))
@@ -362,7 +367,11 @@ namespace UXF
             string guid = Guid.NewGuid().ToString();
             string jsonRequest = MiniJSON.Json.Serialize(request);
             DDB_GetItem(tableName, jsonRequest, gameObject.name, guid);
-            requestCallbackMap.Add(guid, callback);
+            if (requestCallbackMap.ContainsKey(guid))
+            {
+                Utilities.UXFDebugLogError($"GetCustomDataFromDB: Duplicate GUID detected: {guid}. Overwriting existing callback.");
+            }
+            requestCallbackMap[guid] = callback;
         }
 
 
@@ -374,19 +383,78 @@ namespace UXF
         private void HandleSuccessfulDBRead(string jsonResult)
         {
             Utilities.UXFDebugLog(jsonResult);
-            Dictionary<string, object> jsonRequest = (Dictionary<string, object>) MiniJSON.Json.Deserialize(jsonResult);
-            string guid = (string) jsonRequest["guid"];
-            Action<Dictionary<string, object>> callback = requestCallbackMap[guid];
+            object jsonRequestObj = MiniJSON.Json.Deserialize(jsonResult);
+            if (!(jsonRequestObj is Dictionary<string, object> jsonRequest))
+            {
+                Utilities.UXFDebugLogError($"HandleSuccessfulDBRead: Failed to deserialize JSON response - result was not a valid dictionary. Response: {jsonResult}");
+                return;
+            }
+
+            if (!jsonRequest.ContainsKey("guid"))
+            {
+                Utilities.UXFDebugLogError($"HandleSuccessfulDBRead: JSON response missing 'guid' key. Response: {jsonResult}");
+                return;
+            }
+
+            if (!(jsonRequest["guid"] is string guid))
+            {
+                Utilities.UXFDebugLogError($"HandleSuccessfulDBRead: 'guid' value is not a string. Response: {jsonResult}");
+                return;
+            }
+
+            if (!requestCallbackMap.TryGetValue(guid, out Action<Dictionary<string, object>> callback))
+            {
+                Utilities.UXFDebugLogError($"HandleSuccessfulDBRead: No callback found for GUID: {guid}");
+                return;
+            }
 
             requestCallbackMap.Remove(guid);
-            callback.Invoke((Dictionary<string, object>) jsonRequest["result"]);
+
+            if (!jsonRequest.ContainsKey("result"))
+            {
+                Utilities.UXFDebugLogError($"HandleSuccessfulDBRead: JSON response missing 'result' key. Response: {jsonResult}");
+                callback.Invoke(null);
+                return;
+            }
+
+            object resultObj = jsonRequest["result"];
+            if (resultObj is Dictionary<string, object> resultDict)
+            {
+                callback.Invoke(resultDict);
+            }
+            else
+            {
+                Utilities.UXFDebugLogError($"HandleSuccessfulDBRead: 'result' value is not a valid dictionary. GUID: {guid}");
+                callback.Invoke(null);
+            }
         }
 
         private void HandleUnsuccessfulDBRead(string jsonResult)
         {
-            Dictionary<string, object> jsonRequest = (Dictionary<string, object>) MiniJSON.Json.Deserialize(jsonResult);
-            string guid = (string) jsonRequest["guid"];
-            Action<Dictionary<string, object>> callback = requestCallbackMap[guid];
+            object jsonRequestObj = MiniJSON.Json.Deserialize(jsonResult);
+            if (!(jsonRequestObj is Dictionary<string, object> jsonRequest))
+            {
+                Utilities.UXFDebugLogError($"HandleUnsuccessfulDBRead: Failed to deserialize JSON response - result was not a valid dictionary. Response: {jsonResult}");
+                return;
+            }
+
+            if (!jsonRequest.ContainsKey("guid"))
+            {
+                Utilities.UXFDebugLogError($"HandleUnsuccessfulDBRead: JSON response missing 'guid' key. Response: {jsonResult}");
+                return;
+            }
+
+            if (!(jsonRequest["guid"] is string guid))
+            {
+                Utilities.UXFDebugLogError($"HandleUnsuccessfulDBRead: 'guid' value is not a string. Response: {jsonResult}");
+                return;
+            }
+
+            if (!requestCallbackMap.TryGetValue(guid, out Action<Dictionary<string, object>> callback))
+            {
+                Utilities.UXFDebugLogError($"HandleUnsuccessfulDBRead: No callback found for GUID: {guid}");
+                return;
+            }
 
             requestCallbackMap.Remove(guid);
             callback.Invoke(null);

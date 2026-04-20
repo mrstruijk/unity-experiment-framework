@@ -8,7 +8,8 @@ namespace SOSXR.UXF
     {
         [SerializeField] private ExperimentSettings m_settings;
         [SerializeField] private bool m_autoGenerateSession = true;
-        private void OnEnable()
+
+        private void Start()
         {
             var session = Session.instance;
 
@@ -55,6 +56,8 @@ namespace SOSXR.UXF
                 {
                     block.settings.SetValueStored("example_isBlockEven", "isUneven");
                 }
+
+                Debug.Log(i);
             }
 
             if (m_settings.ShuffleBlocks)

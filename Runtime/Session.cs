@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.IO;
 using System.Collections;
@@ -339,8 +339,18 @@ namespace UXF
             // Initialise DataHandlers
             foreach (var dataHandler in ActiveDataHandlers)
             {
-                dataHandler.Initialise(this);
-                dataHandler.SetUp();
+                try
+                {
+                    dataHandler.Initialise(this);
+                    dataHandler.SetUp();
+                }
+                catch (Exception exception)
+                {
+                    string handlerName = dataHandler.GetType().Name;
+                    string handlerGameObject = dataHandler.gameObject != null ? dataHandler.gameObject.name : "Unknown";
+                    Utilities.UXFDebugLog($"DataHandler '{handlerName}' on GameObject '{handlerGameObject}' failed during setup - disabling handler. Error: {exception.Message}");
+                    dataHandler.active = false;
+                }
             }
             _hasInitialised = true;
 

@@ -47,7 +47,7 @@ namespace SOSXR.UXF
                 StartedBlock();
             }
 
-            Debug.Log($"Starting Trial {_session.currentTrialNum}/{_session.LastTrial.number} (total) / {_session.CurrentBlock.GetCurrentTrialInBlock().numberInBlock}/{_session.CurrentBlock.trials.Count} (relative) of Block {_session.currentBlockNum}/{_session.blocks.Count}");
+            //Debug.Log($"Starting Trial {_session.currentTrialNum}/{_session.LastTrial.number} (total) / {_session.CurrentBlock.GetCurrentTrialInBlock().numberInBlock}/{_session.CurrentBlock.trials.Count} (relative) of Block {_session.currentBlockNum}/{_session.blocks.Count}");
         }
 
 
@@ -89,7 +89,7 @@ namespace SOSXR.UXF
 
             _session.EndCurrentTrial();
 
-            Debug.Log($"Stopping Trial {_session.currentTrialNum}/{_session.LastTrial.number} (total) / {_session.CurrentBlock.GetCurrentTrialInBlock().numberInBlock}/{_session.CurrentBlock.trials.Count} (relative) of Block {_session.currentBlockNum}/{_session.blocks.Count}");
+            //Debug.Log($"Stopping Trial {_session.currentTrialNum}/{_session.LastTrial.number} (total) / {_session.CurrentBlock.GetCurrentTrialInBlock().numberInBlock}/{_session.CurrentBlock.trials.Count} (relative) of Block {_session.currentBlockNum}/{_session.blocks.Count}");
 
             if (_session.CurrentTrial.IsLastTrialInBlock())
             {
