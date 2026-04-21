@@ -42,29 +42,29 @@ namespace SOSXR.UXF
                 return;
             }
 
-            OnTrialBegin?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting
+            OnTrialBegin?.Invoke(value);
         }
 
 
         protected override void TrialEnd()
         {
-            if (!GetValue(m_settingsKey, out string value)) // "If our Setting is not of a string-type, do not continue. Otherwise, give me the actual string value"
+            if (!GetValue(m_settingsKey, out string value))
             {
                 return;
             }
 
-            OnTrialEnd?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting
+            OnTrialEnd?.Invoke(value);
         }
 
 
         protected override void BlockEnd()
         {
-            if (!GetValue(m_settingsKey, out string value)) // "If our Setting is not of a string-type, do not continue. Otherwise, give me the actual string value"
+            if (!GetValue(m_settingsKey, out string value))
             {
                 return;
             }
 
-            OnBlockEnd?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting
+            OnBlockEnd?.Invoke(value);
 
             m_value = null; // "reset the value" to null to indicate that the value is/should no longer be used.
         }

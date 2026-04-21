@@ -113,6 +113,52 @@ A customisable user interface is optionally available to collect demographic dat
 
 Use the `ExperimentProfileSelector` to set the datapath. Defaults to PersistentDataPath (conversely to UXF default, which is the StreamingAssetsPath).
 
+### SOSXR: Components
+
+The SOSXR namespace provides additional components that extend UXF's functionality:
+
+#### ExperimentRunner
+A central controller for managing the experiment flow:
+- **StartTrial()** / **StopTrial()**: Manages trial lifecycle with automatic block detection
+- **StopSessionEarly()**: Gracefully aborts the session mid-experiment
+- Automatically handles delays between trials (configurable via `StartNextTrialDelayMS` setting)
+- Context menu items for easy testing in the editor
+
+#### ExperimentGenerator
+Automatically generates experiment structure from session settings:
+- Reads `BlocksAmount` and `TrialsPerBlock` from session settings
+- Optional block shuffling for counterbalancing
+- Auto-wires to `onSessionBegin` or can be called manually
+
+#### SettingsResponder (Base Class)
+Abstract base for components that react to settings changes during blocks/trials:
+- Automatically subscribes to UXF events (block begin/end, trial begin/end)
+- Validates setting existence and type safety
+- Derived classes implement behavior for specific setting types
+
+#### SettingToUnityEventBool / Int / String / Void
+Concrete implementations of SettingsResponder that convert setting values to UnityEvents:
+- **Bool**: Passes boolean setting values through UnityEvents
+- **Int**: Passes integer setting values (uses -999 as sentinel for "no value")
+- **String**: Passes string setting values
+- **Void**: Signals events without passing values (useful for triggers)
+
+Example usage:
+```csharp
+// In the inspector, set m_settingsKey to "stimulus_color"
+// When the block/trial begins, OnBlockBegin will fire with the setting value
+SettingToUnityEventString settingResponder;
+// Wire OnBlockBegin to a method that changes scene color
+```
+
+#### UXFExtensions
+Extension methods that add helper functionality to UXF classes:
+- `session.IsInitialised()`: Checks if session has blocks
+- `block.GetSetting<T>()`: Type-safe setting retrieval with conversion
+- `settings.SetValueStored()`: Sets value and auto-registers for logging
+- `trial.IsFirstTrialInBlock()` / `IsLastTrialInBlock()`: Trial position helpers
+- `session.IsLastTrial()`: Checks if current trial is the final one
+
 ## Example
 
 UXF is built around the idea of separating the specification of your experiment (the "what") and the implementation of your experiment (the "how").

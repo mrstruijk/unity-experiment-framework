@@ -21,25 +21,25 @@ namespace SOSXR.UXF
 
         protected override void BlockBegin()
         {
-            OnBlockBegin?.Invoke(); // Invoking the UnityEvent to signal that the block has begun (no value is passed since we don't need the setting value here)
+            OnBlockBegin?.Invoke();
         }
 
 
         protected override void TrialBegin()
         {
-            OnTrialBegin?.Invoke(); // Invoking the UnityEvent to signal that the trial has begun (no value is passed since we don't need the setting value here)
+            OnTrialBegin?.Invoke();
         }
 
 
         protected override void TrialEnd()
         {
-            OnTrialEnd?.Invoke(); // Invoking the UnityEvent to signal that the trial has ended (no value is passed since we don't need the setting value here)
+            OnTrialEnd?.Invoke();
         }
 
 
         protected override void BlockEnd()
         {
-            OnBlockEnd?.Invoke(); // Invoking the UnityEvent to signal that the block has ended (no value is passed since we don't need the setting value here)
+            OnBlockEnd?.Invoke();
         }
     }
 }

@@ -54,11 +54,12 @@ namespace SOSXR.UXF
 
         public static int GetCurrentRelativeTrialNumber(this Block block)
         {
-            return GetCurrentTrialInBlock(block).numberInBlock;
+            var currentTrial = GetCurrentTrialInBlock(block);
+            return currentTrial != null ? currentTrial.numberInBlock : -1;
         }
 
 
-        public static Trial GetFirsTrialInBlock(this Block block)
+        public static Trial GetFirstTrialInBlock(this Block block)
         {
             return block.firstTrial;
         }
@@ -72,16 +73,7 @@ namespace SOSXR.UXF
 
         public static bool IsFirstTrialInBlock(this Trial trial)
         {
-            var relativeCurrentTrial = GetCurrentTrialInBlock(trial.block);
-
-            if (relativeCurrentTrial == null)
-            {
-                return false;
-            }
-
-            var relativeLast = GetFirsTrialInBlock(trial.block);
-
-            return relativeCurrentTrial == relativeLast;
+            return trial == trial.block?.firstTrial;
         }
 
 
@@ -108,21 +100,7 @@ namespace SOSXR.UXF
 
         public static bool IsLastTrialInBlock(this Trial trial)
         {
-            var relativeCurrentTrial = GetCurrentTrialInBlock(trial.block);
-
-            if (relativeCurrentTrial == null)
-            {
-                return false;
-            }
-
-            var relativeLast = GetLastTrialInBlock(trial.block);
-
-            if (relativeCurrentTrial == relativeLast)
-            {
-                return true;
-            }
-
-            return false;
+            return trial == trial.block?.lastTrial;
         }
 
 
@@ -169,6 +147,14 @@ namespace SOSXR.UXF
             }
 
             var settingsParent = settings.GetParent();
+
+            if (settingsParent == null)
+            {
+                Debug.LogWarningFormat("Settings parent is null, cannot determine Session for auto-logging of key {0}!", key);
+
+                return;
+            }
+
             Session session;
 
             // We need to somehow get the Session, but we don't know what we're getting from the GetParent, since that's the interface, and not the concrete type.
@@ -219,7 +205,10 @@ namespace SOSXR.UXF
         /// </summary>
         /// <param name="block"></param>
         /// <param name="key"></param>
-        /// <returns></returns>
+        /// <returns>
+        ///     WARNING: Returns default(T) on conversion failure. For value types (int, bool, float),
+        ///     this means 0, false, or 0.0f which may be indistinguishable from valid data.
+        /// </returns>
         public static T GetSetting<T>(this Block block, string key)
         {
             if (!block.HasSetting(key))
@@ -242,6 +231,15 @@ namespace SOSXR.UXF
         }
 
 
+        /// <summary>
+        ///     Returns the value of a specific setting on a specific Session
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="key"></param>
+        /// <returns>
+        ///     WARNING: Returns default(T) on conversion failure. For value types (int, bool, float),
+        ///     this means 0, false, or 0.0f which may be indistinguishable from valid data.
+        /// </returns>
         public static T GetSetting<T>(this Session session, string key)
         {
             if (!session.HasSetting(key))
@@ -278,6 +276,13 @@ namespace SOSXR.UXF
 
         public static bool HasSetting(this Session session, string key)
         {
+            if (string.IsNullOrEmpty(key))
+            {
+                Debug.LogWarning("HasSetting called with null or empty key.");
+
+                return false;
+            }
+
             var hasSetting = session.settings.ContainsKey(key);
 
             if (hasSetting)
@@ -293,6 +298,13 @@ namespace SOSXR.UXF
 
         public static bool HasSetting(this Block block, string key)
         {
+            if (string.IsNullOrEmpty(key))
+            {
+                Debug.LogWarning("HasSetting called with null or empty key.");
+
+                return false;
+            }
+
             var hasSetting = block.settings.ContainsKey(key);
 
             if (hasSetting)

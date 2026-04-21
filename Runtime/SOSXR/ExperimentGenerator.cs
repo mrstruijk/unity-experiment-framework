@@ -8,20 +8,28 @@ namespace SOSXR.UXF
     {
         [SerializeField] private bool m_autoGenerateSession = true;
 
-        private void Start()
-        {
-            var session = Session.instance;
+        private Session _session;
 
-            if (session == null)
+        private void Awake()
+        {
+            _session = Session.instance;
+
+            if (_session == null)
             {
+                Debug.LogError("Could not find Session. Cannot continue");
                 return;
             }
+        }
 
+
+        private void OnEnable()
+        {
             if (m_autoGenerateSession == true)
             {
-                session.onSessionBegin.AddListener(GenerateSession);
+                _session?.onSessionBegin.AddListener(GenerateSession);
             }
         }
+
 
         /// <summary>
         ///     This gets called from the OnSessionBegin event on the [UXF_Rig] GameObject.
@@ -35,9 +43,19 @@ namespace SOSXR.UXF
             var trialsPerBlock = session.GetSetting<int>("TrialsPerBlock");
             var shuffleBlocks = session.GetSetting<bool>("ShuffleBlocks");
 
-            Debug.LogFormat($"Creating {endingBlock} blocks with {trialsPerBlock} trials each");
+            if (endingBlock <= 0)
+            {
+                Debug.LogError("BlocksAmount must be > 0");
+                return;
+            }
 
-            session.settings.SetValue("sesh", 10); // You can set Settings on the Session-level: automatically logged to `settings.json`.
+            if (trialsPerBlock <= 0)
+            {
+                Debug.LogError("TrialsPerBlock must be > 0");
+                return;
+            }
+
+            Debug.LogFormat($"Creating {endingBlock} blocks with {trialsPerBlock} trials each");
 
             for (var i = startingBlock; i <= endingBlock; i++)
             {
@@ -57,6 +75,7 @@ namespace SOSXR.UXF
                 Debug.Log("Shuffled blocks to new order");
             }
 
+            // Warning: Debug logging block settings - avoid logging sensitive values in production
             foreach (var block in session.blocks)
             {
                 foreach (var setting in block.GetSettings())
@@ -66,18 +85,12 @@ namespace SOSXR.UXF
             }
         }
 
+
         private void OnDisable()
         {
-            var session = Session.instance;
-
-            if (session == null)
-            {
-                return;
-            }
-
             if (m_autoGenerateSession == true)
             {
-                session.onSessionBegin.RemoveListener(GenerateSession);
+                _session?.onSessionBegin.RemoveListener(GenerateSession);
             }
         }
     }

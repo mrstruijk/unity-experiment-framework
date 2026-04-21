@@ -192,7 +192,7 @@ namespace SOSXR.UXF
         public void GenerateSession(UXF.Session session);
     }
 
-    [UnityEngine.RequireComponent(typeof(UXF.Session))] public class ExperimentRunner : UnityEngine.MonoBehaviour
+    public class ExperimentRunner : UnityEngine.MonoBehaviour
     {
         public ExperimentRunner() {}
         [UnityEngine.ContextMenu(@"StartTrial")] public void StartTrial();
@@ -206,7 +206,7 @@ namespace SOSXR.UXF
         [UnityEngine.SerializeField] protected string m_settingsKey;
         protected SettingsResponder() {}
         protected abstract void BlockBegin();
-        protected abstract void BlokEnd();
+        protected abstract void BlockEnd();
         protected bool GetValue<T>(string key, out T value);
         protected abstract void TrialBegin();
         protected abstract void TrialEnd();
@@ -221,7 +221,7 @@ namespace SOSXR.UXF
         public bool Value { get; }
         public SettingToUnityEventBool() {}
         protected override void BlockBegin();
-        protected override void BlokEnd();
+        protected override void BlockEnd();
         protected override void TrialBegin();
         protected override void TrialEnd();
     }
@@ -235,7 +235,7 @@ namespace SOSXR.UXF
         public int Value { get; }
         public SettingToUnityEventInt() {}
         protected override void BlockBegin();
-        protected override void BlokEnd();
+        protected override void BlockEnd();
         protected override void TrialBegin();
         protected override void TrialEnd();
     }
@@ -249,7 +249,7 @@ namespace SOSXR.UXF
         public string Value { get; }
         public SettingToUnityEventString() {}
         protected override void BlockBegin();
-        protected override void BlokEnd();
+        protected override void BlockEnd();
         protected override void TrialBegin();
         protected override void TrialEnd();
     }
@@ -262,7 +262,7 @@ namespace SOSXR.UXF
         public UnityEngine.Events.UnityEvent OnTrialEnd;
         public SettingToUnityEventVoid() {}
         protected override void BlockBegin();
-        protected override void BlokEnd();
+        protected override void BlockEnd();
         protected override void TrialBegin();
         protected override void TrialEnd();
     }
@@ -273,7 +273,7 @@ namespace SOSXR.UXF
         public static bool DoesSettingExist(this UXF.Session session, string key);
         public static int GetCurrentRelativeTrialNumber(this UXF.Block block);
         public static UXF.Trial GetCurrentTrialInBlock(this UXF.Block block);
-        public static UXF.Trial GetFirsTrialInBlock(this UXF.Block block);
+        public static UXF.Trial GetFirstTrialInBlock(this UXF.Block block);
         public static UXF.Trial GetLastTrialInBlock(this UXF.Block block);
         public static System.Collections.Generic.Dictionary<string, object> GetSessionSettings(this UXF.Session session);
         public static T GetSetting<T>(this UXF.Block block, string key);

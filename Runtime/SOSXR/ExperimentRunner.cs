@@ -18,14 +18,23 @@ namespace SOSXR.UXF
         [ContextMenu(nameof(StartTrial))]
         public void StartTrial()
         {
-            if (!_session.IsInitialised())
+            if (_session == null)
             {
+                Debug.LogError("Cannot start a Trial if the Session is null");
+
+                return;
+            }
+
+            if (!_session.hasInitialised)
+            {
+                Debug.LogWarning("Cannot start a Trial if the Session is not yet initialised");
+
                 return;
             }
 
             if (_session.IsLastTrial())
             {
-                Debug.LogError("Something is wrong. This should not be possible");
+                Debug.LogWarning("Something is wrong. This should not be possible");
 
                 return;
             }
@@ -43,8 +52,6 @@ namespace SOSXR.UXF
             {
                 StartedBlock();
             }
-
-            //Debug.Log($"Starting Trial {_session.currentTrialNum}/{_session.LastTrial.number} (total) / {_session.CurrentBlock.GetCurrentTrialInBlock().numberInBlock}/{_session.CurrentBlock.trials.Count} (relative) of Block {_session.currentBlockNum}/{_session.blocks.Count}");
         }
 
 
@@ -52,16 +59,7 @@ namespace SOSXR.UXF
         {
             Debug.Log($"Starting Block {_session.currentBlockNum}");
 
-            var example_isBlockEven = _session.CurrentBlock.GetSetting<bool>("example_isBlockEven");
-            if (example_isBlockEven)
-            {
-                Debug.Log("Example getting stored values: This is an even block");
-            }
-            else
-            {
-                Debug.Log("Example getting stored values: not an even block");
-            }
-
+            // This is really just an example to show which Settings are stored for this current Block.
             foreach (var blockSetting in _session.CurrentBlock.GetSettings())
             {
                 Debug.Log($"Our Block has {blockSetting.Key}:{blockSetting.Value}");
@@ -72,8 +70,17 @@ namespace SOSXR.UXF
         [ContextMenu(nameof(StopTrial))]
         public void StopTrial()
         {
-            if (!_session.IsInitialised())
+            if (_session == null)
             {
+                Debug.LogError("Cannot stop a Trial if the Session is null");
+
+                return;
+            }
+
+            if (!_session.hasInitialised)
+            {
+                Debug.LogWarning("Cannot stop a Trial if the Session is not yet initialised");
+
                 return;
             }
 
@@ -86,8 +93,6 @@ namespace SOSXR.UXF
 
             _session.EndCurrentTrial();
 
-            //Debug.Log($"Stopping Trial {_session.currentTrialNum}/{_session.LastTrial.number} (total) / {_session.CurrentBlock.GetCurrentTrialInBlock().numberInBlock}/{_session.CurrentBlock.trials.Count} (relative) of Block {_session.currentBlockNum}/{_session.blocks.Count}");
-
             if (_session.CurrentTrial.IsLastTrialInBlock())
             {
                 BlockEnded();
@@ -99,11 +104,14 @@ namespace SOSXR.UXF
 
                 return;
             }
+
             var StartNextTrialDelayMS = _session.GetSetting<int>("StartNextTrialDelayMS");
 
             if (StartNextTrialDelayMS >= 0)
             {
-                var delaySecs = StartNextTrialDelayMS / 1000;
+                CancelInvoke(nameof(StartTrial));
+
+                var delaySecs = StartNextTrialDelayMS / 1000f;
 
                 Debug.Log($"Auto-starting next Trial in {delaySecs} seconds");
 
@@ -122,7 +130,7 @@ namespace SOSXR.UXF
         {
             Debug.Log("That was the last Trial in our last Block, will be stopping this Session");
 
-            _session.End();
+            _session?.End();
 
             // This in turn SHOULD invoke the Session to call the OnSessionEnd event, where I can hook a method that gracefully handles fade to black, scene cleanup, etc.
         }
@@ -131,23 +139,34 @@ namespace SOSXR.UXF
         [ContextMenu(nameof(StopSessionEarly))]
         public void StopSessionEarly()
         {
-            if (_session.IsInitialised())
+            if (_session == null)
             {
-                var currentTrial = _session.CurrentTrial.number;
-                var remaining = _session.LastTrial.number - currentTrial;
+                Debug.LogError("Cannot stop a Session early if the Session is null");
 
-                Debug.LogWarningFormat($"We're not done yet! We're bailing out of {remaining} Trials!");
-
-                for (var i = currentTrial; i < _session.LastTrial.number; i++)
-                {
-                    _session.endAfterLastTrial = true;
-                    _session.EndCurrentTrial();
-                    _session.BeginNextTrialSafe();
-                    _session.EndCurrentTrial();
-                }
-
-                StopSession();
+                return;
             }
+
+            if (!_session.hasInitialised)
+            {
+                Debug.LogWarning("Cannot stop a Session early if the Session is not yet initialised");
+
+                return;
+            }
+
+            CancelInvoke(nameof(StartTrial));
+
+            if (_session.TrialInProgress())
+            {
+                _session.EndCurrentTrial();
+            }
+
+            var currentTrial = _session.CurrentTrial.number;
+            var remaining = _session.LastTrial.number - currentTrial;
+
+            Debug.LogWarningFormat($"We're not done yet! We're bailing out of {remaining} Trials!");
+
+            _session.endAfterLastTrial = true;
+            _session.End();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UXF;
 
 
@@ -21,7 +21,7 @@ namespace SOSXR.UXF
 
         private void Awake()
         {
-            _session = FindFirstObjectByType<Session>();
+            _session = Session.instance;
 
             if (_session == null)
             {
@@ -33,26 +33,14 @@ namespace SOSXR.UXF
 
         private void OnEnable()
         {
-            _session?.onSessionBegin?.AddListener(CheckSettingExist);
-            _session?.onBlockBegin?.AddListener(BlockBegin);
-            _session?.onTrialBegin?.AddListener(TrialBegin);
-            _session?.onTrialEnd?.AddListener(TrialEnd);
-            _session?.onBlockEnd?.AddListener(BlockEnd);
+            _session?.onBlockBegin?.AddListener(BlockBeginHandler);
+            _session?.onTrialBegin?.AddListener(TrialBeginHandler);
+            _session?.onTrialEnd?.AddListener(TrialEndHandler);
+            _session?.onBlockEnd?.AddListener(BlockEndHandler);
         }
 
 
-        private void CheckSettingExist(Session session)
-        {
-            if (_session.DoesSettingExist(m_settingsKey))
-            {
-                return;
-            }
-
-            Debug.LogWarning($"We're looking for {m_settingsKey}, which does not seem to be registered in this Session or in any of the Blocks. Please check that this is ok?");
-        }
-
-
-        private void BlockBegin(Block currentBlock)
+        private void BlockBeginHandler(Block currentBlock)
         {
             if (currentBlock.HasSetting(m_settingsKey))
             {
@@ -68,7 +56,7 @@ namespace SOSXR.UXF
         protected abstract void BlockBegin();
 
 
-        private void TrialBegin(Trial trial)
+        private void TrialBeginHandler(Trial trial)
         {
             if (trial.block.HasSetting(m_settingsKey))
             {
@@ -80,7 +68,7 @@ namespace SOSXR.UXF
         protected abstract void TrialBegin();
 
 
-        private void TrialEnd(Trial trial)
+        private void TrialEndHandler(Trial trial)
         {
             if (trial.block.HasSetting(m_settingsKey))
             {
@@ -92,7 +80,7 @@ namespace SOSXR.UXF
         protected abstract void TrialEnd();
 
 
-        private void BlockEnd(Block currentBlock)
+        private void BlockEndHandler(Block currentBlock)
         {
             if (currentBlock.HasSetting(m_settingsKey))
             {
@@ -110,11 +98,10 @@ namespace SOSXR.UXF
 
         private void OnDisable()
         {
-            _session?.onSessionBegin?.RemoveListener(CheckSettingExist);
-            _session?.onBlockBegin?.RemoveListener(BlockBegin);
-            _session?.onTrialBegin?.RemoveListener(TrialBegin);
-            _session?.onTrialEnd?.RemoveListener(TrialEnd);
-            _session?.onBlockEnd?.RemoveListener(BlockEnd);
+            _session?.onBlockBegin?.RemoveListener(BlockBeginHandler);
+            _session?.onTrialBegin?.RemoveListener(TrialBeginHandler);
+            _session?.onTrialEnd?.RemoveListener(TrialEndHandler);
+            _session?.onBlockEnd?.RemoveListener(BlockEndHandler);
         }
 
 
@@ -131,21 +118,53 @@ namespace SOSXR.UXF
         /// <returns></returns>
         protected bool GetValue<T>(string key, out T value)
         {
-            value = _session.CurrentBlock.GetSetting<T>(key);
+            value = default;
+            var currentBlock = _session.CurrentBlock;
 
-            var type = typeof(T);
-
-            if (value == null)
+            if (currentBlock == null)
             {
-                Debug.LogWarning($"Our value for '{key}' null!");
-
+                Debug.LogWarning($"GetValue('{key}'): No current block available.");
                 return false;
             }
 
-            if (value.GetType() != type)
+            if (!currentBlock.HasSetting(key))
             {
-                Debug.LogWarning($"We were expecting '{key}' to be of type {type}. Cannot send this UnityEvent out");
+                Debug.LogWarning($"GetValue('{key}'): Setting does not exist in current block.");
+                return false;
+            }
 
+            object rawValue;
+            try
+            {
+                rawValue = currentBlock.GetSetting<object>(key);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"GetValue('{key}'): Failed to retrieve setting - {e.Message}");
+                return false;
+            }
+
+            if (rawValue == null)
+            {
+                Debug.LogWarning($"GetValue('{key}'): Setting value is null.");
+                return false;
+            }
+
+            var targetType = typeof(T);
+
+            if (!targetType.IsAssignableFrom(rawValue.GetType()))
+            {
+                Debug.LogWarning($"GetValue('{key}'): Setting is type {rawValue.GetType()} but we expected {targetType}.");
+                return false;
+            }
+
+            try
+            {
+                value = (T) rawValue;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"GetValue('{key}'): Failed to convert setting to {targetType} - {e.Message}");
                 return false;
             }
 

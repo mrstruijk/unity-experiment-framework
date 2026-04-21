@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 
 
@@ -29,9 +29,9 @@ namespace SOSXR.UXF
                 return;
             }
 
-            OnBlockBegin?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting. In the bool's case, that can be True or Falso
+            OnBlockBegin?.Invoke(value);
 
-            m_value = value; // For visual reference, and if other scripts want to access the value.
+            m_value = value;
         }
 
 

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 namespace SOSXR.UXF
@@ -28,9 +28,9 @@ namespace SOSXR.UXF
                 return;
             }
 
-            OnBlockBegin?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting. In the int's case, that can be any integer value
+            OnBlockBegin?.Invoke(value);
 
-            m_value = value; // For visual reference, and if other scripts want to access the value.
+            m_value = value;
         }
 
 
@@ -41,29 +41,29 @@ namespace SOSXR.UXF
                 return;
             }
 
-            OnTrialBegin?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting
+            OnTrialBegin?.Invoke(value);
         }
 
 
         protected override void TrialEnd()
         {
-            if (!GetValue(m_settingsKey, out int value)) // "If our Setting is not of an int-type, do not continue. Otherwise, give me the actual int value"
+            if (!GetValue(m_settingsKey, out int value))
             {
                 return;
             }
 
-            OnTrialEnd?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting
+            OnTrialEnd?.Invoke(value);
         }
 
 
         protected override void BlockEnd()
         {
-            if (!GetValue(m_settingsKey, out int value)) // "If our Setting is not of an int-type, do not continue. Otherwise, give me the actual int value"
+            if (!GetValue(m_settingsKey, out int value))
             {
                 return;
             }
 
-            OnBlockEnd?.Invoke(value); // Invoking the UnityEvent, sending along the value of our Setting
+            OnBlockEnd?.Invoke(value);
 
             m_value = -999; // "reset the value" to -999 (our sentinel value) to indicate that the value is/should no longer be used.
         }
