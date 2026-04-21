@@ -57,7 +57,7 @@ namespace SOSXR.UXF
         }
 
 
-        protected override void BlokEnd()
+        protected override void BlockEnd()
         {
             if (!GetValue(m_settingsKey, out bool value))
             {

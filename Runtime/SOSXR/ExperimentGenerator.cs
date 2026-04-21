@@ -6,7 +6,6 @@ namespace SOSXR.UXF
 {
     public class ExperimentGenerator : MonoBehaviour
     {
-        // [SerializeField] private ExperimentSettings m_settings;
         [SerializeField] private bool m_autoGenerateSession = true;
 
         private void Start()
@@ -44,22 +43,12 @@ namespace SOSXR.UXF
             {
                 var block = session.CreateBlock(trialsPerBlock);
 
-                var isFirstHalf = i <= (endingBlock + startingBlock) / 2;
-                var isEvenBlock = i % 2 == 0;
-
                 // this is how we can set values to the Blocks, bool in this case.
+                var isFirstHalf = i <= (endingBlock + startingBlock) / 2;
                 block.settings.SetValueStored("example_isBlockInFirstHalf", isFirstHalf); // this auto-logs itself in the `trial_results.json`, because it registers itself to the "Settings To Log" list.
 
-                if (isEvenBlock)
-                {
-                    block.settings.SetValueStored("example_isBlockEven", "isEven");
-                }
-                else
-                {
-                    block.settings.SetValueStored("example_isBlockEven", "isUneven");
-                }
-
-                Debug.Log(i);
+                var isEvenBlock = i % 2 == 0;
+                block.settings.SetValueStored("example_isBlockEven", isEvenBlock);
             }
 
             if (shuffleBlocks)

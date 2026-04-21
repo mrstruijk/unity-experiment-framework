@@ -37,7 +37,7 @@ namespace SOSXR.UXF
             _session?.onBlockBegin?.AddListener(BlockBegin);
             _session?.onTrialBegin?.AddListener(TrialBegin);
             _session?.onTrialEnd?.AddListener(TrialEnd);
-            _session?.onBlockEnd?.AddListener(BlokEnd);
+            _session?.onBlockEnd?.AddListener(BlockEnd);
         }
 
 
@@ -92,11 +92,11 @@ namespace SOSXR.UXF
         protected abstract void TrialEnd();
 
 
-        private void BlokEnd(Block currentBlock)
+        private void BlockEnd(Block currentBlock)
         {
             if (currentBlock.HasSetting(m_settingsKey))
             {
-                BlokEnd();
+                BlockEnd();
             }
             else
             {
@@ -105,7 +105,7 @@ namespace SOSXR.UXF
         }
 
 
-        protected abstract void BlokEnd();
+        protected abstract void BlockEnd();
 
 
         private void OnDisable()
@@ -114,7 +114,7 @@ namespace SOSXR.UXF
             _session?.onBlockBegin?.RemoveListener(BlockBegin);
             _session?.onTrialBegin?.RemoveListener(TrialBegin);
             _session?.onTrialEnd?.RemoveListener(TrialEnd);
-            _session?.onBlockEnd?.RemoveListener(BlokEnd);
+            _session?.onBlockEnd?.RemoveListener(BlockEnd);
         }
 
 

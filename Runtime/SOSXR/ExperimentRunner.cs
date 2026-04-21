@@ -4,17 +4,14 @@ using UXF;
 
 namespace SOSXR.UXF
 {
-    [RequireComponent(typeof(Session))]
     public class ExperimentRunner : MonoBehaviour
     {
-        // [SerializeField] private ExperimentSettings m_settings;
-
         private Session _session;
 
 
         private void Awake()
         {
-            _session = GetComponent<Session>();
+            _session = Session.instance;
         }
 
 
