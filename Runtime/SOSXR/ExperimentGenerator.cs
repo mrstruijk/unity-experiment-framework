@@ -10,24 +10,28 @@ namespace SOSXR.UXF
 
         private Session _session;
 
+
         private void Awake()
         {
             _session = Session.instance;
-
-            if (_session == null)
-            {
-                Debug.LogError("Could not find Session. Cannot continue");
-                return;
-            }
         }
 
 
         private void OnEnable()
         {
-            if (m_autoGenerateSession == true)
+            if (!m_autoGenerateSession)
             {
-                _session?.onSessionBegin.AddListener(GenerateSession);
+                return;
             }
+
+            if (_session == null)
+            {
+                Debug.LogWarning($"Could not find Session. Cannot automatically add the {nameof(GenerateSession)} method to the OnSessionBegin event of the Session");
+
+                return;
+            }
+
+            _session.onSessionBegin.AddListener(GenerateSession);
         }
 
 
