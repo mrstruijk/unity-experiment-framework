@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -345,7 +345,7 @@ namespace UXF.UI
             switch (settingsMode)
             {
                 case SettingsMode.AcquireFromUI:
-                    var experimentProfileSelector = FindFirstObjectByType<ExperimentProfileSelector>();
+                    var experimentProfileSelector = FindAnyObjectByType<ExperimentProfileSelector>();
                     string settingsPath = Path.Combine(experimentProfileSelector?.profilePath, settingsElement.GetContents().ToString());
                     string settingsText;
                     try

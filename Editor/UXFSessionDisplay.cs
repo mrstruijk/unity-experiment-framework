@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -42,7 +42,7 @@ namespace UXF.EditorUtils
 		static void FetchReferences()
 		{
 #if UNITY_6000
-            session = FindFirstObjectByType<Session>();
+            session = FindAnyObjectByType<Session>();
 #else
             session = FindObjectOfType<Session>();
 #endif            

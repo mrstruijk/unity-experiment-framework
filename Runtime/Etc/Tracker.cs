@@ -79,7 +79,7 @@ namespace UXF
                 return;
             }
 
-            var session = FindFirstObjectByType<Session>();
+            var session = FindAnyObjectByType<Session>();
 
             if (session == null)
             {

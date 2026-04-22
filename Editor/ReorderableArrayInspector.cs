@@ -1,4 +1,4 @@
-﻿/*MIT License
+/*MIT License
 
 Copyright(c) 2017 Jeiel Aranal
 
@@ -231,8 +231,8 @@ namespace SubjectNerd.Utilities
 								int newIndex = property.arraySize;
 								property.arraySize++;
 
-								SerializedProperty target = property.GetArrayElementAtIndex(newIndex);
-								target.objectReferenceInstanceIDValue = dragged_object.GetInstanceID();
+							SerializedProperty target = property.GetArrayElementAtIndex(newIndex);
+							target.objectReferenceEntityIdValue = dragged_object.GetEntityId();
 							}
 						}
 						evt.Use();

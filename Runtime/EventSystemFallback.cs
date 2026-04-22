@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,7 +29,7 @@ namespace UXF
         void CreateEventSystem()
         {
 #if UNITY_6000
-            if (FindFirstObjectByType<EventSystem>() == null)
+            if (FindAnyObjectByType<EventSystem>() == null)
 #else
             if (FindObjectOfType<EventSystem>() == null)
 #endif
