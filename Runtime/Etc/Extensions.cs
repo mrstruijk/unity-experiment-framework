@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +25,10 @@ namespace UXF
         /// <returns></returns>
         public static List<T> Clone<T>(this IList<T> listToClone) where T : ICloneable
         {
-            return listToClone.Select(item => (T)item.Clone()).ToList();
+            var result = new List<T>(listToClone.Count);
+            foreach (var item in listToClone)
+                result.Add((T)item.Clone());
+            return result;
         }
 
         /// <summary>
@@ -93,7 +95,10 @@ namespace UXF
             {
                 throw new ArgumentNullException("paths");
             }
-            return paths.Aggregate(path1, (acc, p) => Path.Combine(acc, p));
+            string result = path1;
+            foreach (var p in paths)
+                result = Path.Combine(result, p);
+            return result;
         }
 
         public static string ToLower(this UXFDataType dataType)
@@ -123,7 +128,11 @@ namespace UXF
             }
 
             if (bucket != null && count > 0)
-                yield return bucket.Take(count).ToArray();
+            {
+                var result = new TSource[count];
+                Array.Copy(bucket, result, count);
+                yield return result;
+            }
         }
 
     }

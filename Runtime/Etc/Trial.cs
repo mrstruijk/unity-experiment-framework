@@ -25,7 +25,15 @@ namespace UXF
         {
             get
             {
-                if (_number == 0) _number = session.Trials.ToList().IndexOf(this) + 1;
+                if (_number == 0)
+                {
+                    int idx = 1;
+                    foreach (var t in session.Trials)
+                    {
+                        if (ReferenceEquals(t, this)) { _number = idx; break; }
+                        idx++;
+                    }
+                }
                 return _number;
             }
         }
@@ -170,11 +178,8 @@ namespace UXF
         {
             if (dataType.GetDataLevel() != UXFDataLevel.PerTrial)
             {
-                Utilities.UXFDebugLogErrorFormat(
-                    "Error trying to save data '{0}' of type UXFDataType.{1} associated with the Trial. The valid types for this method are {2}. Reverting to type UXFDataType.OtherTrialData.",
-                    dataName,
-                    dataType,
-                    string.Join(", ", UXFDataLevel.PerTrial.GetValidDataTypes())
+                Utilities.UXFDebugLogError(
+                    $"Error trying to save data '{dataName}' of type UXFDataType.{dataType} associated with the Trial. The valid types for this method are {string.Join(", ", UXFDataLevel.PerTrial.GetValidDataTypes())}. Reverting to type UXFDataType.OtherTrialData."
                     );
                 return false;
             }
@@ -198,7 +203,7 @@ namespace UXF
             foreach(var dataHandler in session.ActiveDataHandlers)
             {
                 string location = dataHandler.HandleDataTable(table, session.experimentName, session.ppid, session.number, dataName, dataType, number);
-                result[string.Format("{0}_location_{1}", dataName, i++)] = location.Replace("\\", "/");
+                result[$"{dataName}_location_{i++}"] = location.Replace("\\", "/");
             }
         }
 
@@ -216,7 +221,7 @@ namespace UXF
             foreach(var dataHandler in session.ActiveDataHandlers)
             {              
                 string location = dataHandler.HandleJSONSerializableObject(serializableObject, session.experimentName, session.ppid, session.number, dataName, dataType, number);
-                result[string.Format("{0}_location_{1}", dataName, i++)] = location.Replace("\\", "/");
+                result[$"{dataName}_location_{i++}"] = location.Replace("\\", "/");
             }
         }
 
@@ -234,7 +239,7 @@ namespace UXF
             foreach(var dataHandler in session.ActiveDataHandlers)
             {
                 string location = dataHandler.HandleJSONSerializableObject(serializableObject, session.experimentName, session.ppid, session.number, dataName, dataType, number);
-                result[string.Format("{0}_location_{1}", dataName, i++)] = location.Replace("\\", "/");
+                result[$"{dataName}_location_{i++}"] = location.Replace("\\", "/");
             }
         }
 
@@ -252,7 +257,7 @@ namespace UXF
             foreach(var dataHandler in session.ActiveDataHandlers)
             {
                 string location = dataHandler.HandleText(text, session.experimentName, session.ppid, session.number, dataName, dataType, number);
-                result[string.Format("{0}_location_{1}", dataName, i++)] = location.Replace("\\", "/");
+                result[$"{dataName}_location_{i++}"] = location.Replace("\\", "/");
             }
         }
 
@@ -270,20 +275,26 @@ namespace UXF
             foreach(var dataHandler in session.ActiveDataHandlers)
             {
                 string location = dataHandler.HandleBytes(bytes, session.experimentName, session.ppid, session.number, dataName, dataType, number);
-                result[string.Format("{0}_location_{1}", dataName, i++)] = location.Replace("\\", "/");
+                result[$"{dataName}_location_{i++}"] = location.Replace("\\", "/");
             }
         }
 
         private void SaveData()
         {
             // check no duplicate trackers
-            List<string> duplicateTrackers = session.trackedObjects.Where(tracker => tracker != null)
-              .GroupBy(tracker => tracker.DataName)
-              .Where(g => g.Count() > 1)
-              .Select(y => y.Key)
-              .ToList();
+            var trackerNameCounts = new Dictionary<string, int>();
+            foreach (var tracker in session.trackedObjects)
+            {
+                if (tracker == null) continue;
+                var dn = tracker.DataName;
+                trackerNameCounts.TryGetValue(dn, out int cnt);
+                trackerNameCounts[dn] = cnt + 1;
+            }
+            var duplicateTrackers = new List<string>();
+            foreach (var kvp in trackerNameCounts)
+                if (kvp.Value > 1) duplicateTrackers.Add(kvp.Key);
 
-            if (duplicateTrackers.Any()) throw new InvalidOperationException(string.Format("Two or more trackers in the Tracked Objects field in the Session Inspector have the following object name and descriptor pair, please change the object name fields on the trackers to make them unique: {0}", string.Join(",", duplicateTrackers)));
+            if (duplicateTrackers.Count > 0) throw new InvalidOperationException($"Two or more trackers in the Tracked Objects field in the Session Inspector have the following object name and descriptor pair, please change the object name fields on the trackers to make them unique: {string.Join(",", duplicateTrackers)}");
 
             // log tracked objects
             foreach (Tracker tracker in session.trackedObjects)
@@ -351,7 +362,7 @@ namespace UXF
                 }
                 catch (IOException e)
                 {
-                    Utilities.UXFDebugLogError(string.Format("Error, file may be in use! Exception: {0}", e));
+                    Utilities.UXFDebugLogError($"Error, file may be in use! Exception: {e}");
                 }
                 catch (System.Exception e)
                 {

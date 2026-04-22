@@ -74,14 +74,19 @@ namespace UXF
         /// </summary>
         /// <returns></returns>
         private Dictionary<string, Action<Dictionary<string, object>>> requestCallbackMap = new Dictionary<string, Action<Dictionary<string, object>>>();
+        private string _cachedName;
 
+        private void Awake()
+        {
+            _cachedName = gameObject.name;
+        }
 
         public override void SetUp()
         {
             bool ok = CheckCurrentTargetOK();
             if (!ok) return;
             if (credentials == null) { Utilities.UXFDebugLogError("Credentials have not been set!"); return; }
-            DDB_Setup(credentials.region, credentials.cognitoIdentityPool, gameObject.name);
+            DDB_Setup(credentials.region, credentials.cognitoIdentityPool, _cachedName);
             
             var allDataTypes = Enum.GetValues(typeof(UXFDataType)); 
             foreach (UXFDataType dt in allDataTypes)
@@ -89,7 +94,7 @@ namespace UXF
                 string tableName = GetTableName(session.experimentName, dt);
                 UXFDataLevel dl = DatabaseDataLevel(dt);
                 string newSortKey = dl == UXFDataLevel.PerTrial ? sortKey : string.Empty;
-                DDB_CreateTable(tableName, primaryKey, newSortKey, gameObject.name);
+                DDB_CreateTable(tableName, primaryKey, newSortKey, _cachedName);
             }
 
             if (collectBrowserInfo) AddBrowserInfo();
@@ -148,28 +153,29 @@ namespace UXF
                     Utilities.UXFDebugLogError("Data supplied is supposed to be per-trial but does not contain 'trial_num' column!");
                     return "error";
                 }
-                var dataList = table.GetAsListOfDict()
-                    .Select(item => {
-                        item[primaryKey] = primaryKeyValue;
-                        return item;
-                    })
-                    .Cast<object>();
+                var listOfDict = table.GetAsListOfDict();
+                var dataList = new List<object>(listOfDict.Count);
+                foreach (var item in listOfDict)
+                {
+                    item[primaryKey] = primaryKeyValue;
+                    dataList.Add(item);
+                }
 
                 // split the request into batches of 25 because of limit in DynamoDB BatchWriteItem 
                 var batches = dataList.Batch(25);
                 foreach (var batch in batches)
                 {
                     string req = MiniJSON.Json.Serialize(batch.ToList());
-                    DDB_BatchWriteItem(tableName, req, gameObject.name);
+                    DDB_BatchWriteItem(tableName, req, _cachedName);
                 }
-                return string.Format("dynamodb:{0}:{1}", tableName, primaryKeyValue);
+                return $"dynamodb:{tableName}:{primaryKeyValue}";
             }
             else
             {
-                Dictionary<string, object> dataDict = table
-                            .GetAsDictOfList()
-                            .ToDictionary(kvp => kvp.Key, 
-                                          kvp => (object)kvp.Value);
+                var asDictOfList = table.GetAsDictOfList();
+                var dataDict = new Dictionary<string, object>(asDictOfList.Count);
+                foreach (var kvp in asDictOfList)
+                    dataDict[kvp.Key] = kvp.Value;
                 
                 return HandleJSONSerializableObject(dataDict, experiment, ppid, sessionNum, dataName, dataType, optionalTrialNum);
             }
@@ -267,15 +273,15 @@ namespace UXF
             if (DatabaseDataLevel(dataType) == UXFDataLevel.PerTrial)
             {
                 serializableObject.Add(sortKey, optionalTrialNum);
-                outName = string.Format("dynamodb:{0}:{1}:{2}", tableName, primaryKeyValue, optionalTrialNum);
+                outName = $"dynamodb:{tableName}:{primaryKeyValue}:{optionalTrialNum}";
             }
             else
             {
-                outName = string.Format("dynamodb:{0}:{1}", tableName, primaryKeyValue);
+                outName = $"dynamodb:{tableName}:{primaryKeyValue}";
             }
 
             string req = MiniJSON.Json.Serialize(serializableObject);
-            DDB_PutItem(tableName, req, gameObject.name);
+            DDB_PutItem(tableName, req, _cachedName);
             return outName;
         }
 
@@ -300,7 +306,7 @@ namespace UXF
             if (!ok) return;
 
             string req = MiniJSON.Json.Serialize(item);
-            DDB_PutItem(tableName, req, gameObject.name);
+            DDB_PutItem(tableName, req, _cachedName);
         }
 
 
@@ -366,7 +372,7 @@ namespace UXF
 
             string guid = Guid.NewGuid().ToString();
             string jsonRequest = MiniJSON.Json.Serialize(request);
-            DDB_GetItem(tableName, jsonRequest, gameObject.name, guid);
+            DDB_GetItem(tableName, jsonRequest, _cachedName, guid);
             if (requestCallbackMap.ContainsKey(guid))
             {
                 Utilities.UXFDebugLogError($"GetCustomDataFromDB: Duplicate GUID detected: {guid}. Overwriting existing callback.");
@@ -482,12 +488,12 @@ namespace UXF
 
         private string GetTableName(string experimentName, UXFDataType dataType)
         {
-            return string.Format("UXFData.{0}.{1}", experimentName, dataType.ToString());
+            return $"UXFData.{experimentName}.{dataType}";
         }
 
         public string GetFormattedPrimaryKeyValue(string ppid, int sessionNum, string dataName)
         {
-            return string.Format("{0}_s{1:000}_{2}", ppid, sessionNum, dataName);
+            return $"{ppid}_s{sessionNum:000}_{dataName}";
         }
 
         

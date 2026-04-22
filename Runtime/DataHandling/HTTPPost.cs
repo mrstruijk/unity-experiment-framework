@@ -1,9 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
-using System;
-using System.IO;
 
 
 namespace UXF
@@ -40,15 +40,15 @@ namespace UXF
             string[] lines = table.GetCSVLines();
             string text = string.Join("\n", lines);
 
-            string ext  = Path.GetExtension(dataName);
+            string ext = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string directory = GetSessionPathRelative(experiment, ppid, sessionNum);
             if (dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.ToLower());
 
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.csv", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.csv" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             savePath = savePath.Replace('\\', '/');
 
@@ -56,7 +56,7 @@ namespace UXF
             AuthenticatedRequest(savePath, text);
 
             // return a string representing the location of the data. Will be stored in the trial_results output.
-            return savePath; 
+            return savePath;
         }
 
         public override string HandleJSONSerializableObject(List<object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0)
@@ -64,15 +64,15 @@ namespace UXF
             // get data as text
             string text = MiniJSON.Json.Serialize(serializableObject);
 
-            string ext  = Path.GetExtension(dataName);
+            string ext = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string directory = GetSessionPathRelative(experiment, ppid, sessionNum);
             if (dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.ToLower());
 
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.json", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.json" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             savePath = savePath.Replace('\\', '/');
 
@@ -80,7 +80,7 @@ namespace UXF
             AuthenticatedRequest(savePath, text);
 
             // return a string representing the location of the data. Will be stored in the trial_results output.
-            return savePath; 
+            return savePath;
         }
 
         public override string HandleJSONSerializableObject(Dictionary<string, object> serializableObject, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0)
@@ -88,15 +88,15 @@ namespace UXF
             // get data as text
             string text = MiniJSON.Json.Serialize(serializableObject);
 
-            string ext  = Path.GetExtension(dataName);
+            string ext = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string directory = GetSessionPathRelative(experiment, ppid, sessionNum);
             if (dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.ToLower());
 
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.json", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.json" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             savePath = savePath.Replace('\\', '/');
 
@@ -104,20 +104,20 @@ namespace UXF
             AuthenticatedRequest(savePath, text);
 
             // return a string representing the location of the data. Will be stored in the trial_results output.
-            return savePath; 
+            return savePath;
         }
 
         public override string HandleText(string text, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0)
         {
-            string ext  = Path.GetExtension(dataName);
+            string ext = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string directory = GetSessionPathRelative(experiment, ppid, sessionNum);
             if (dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.ToLower());
 
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.txt", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.txt" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             savePath = savePath.Replace('\\', '/');
 
@@ -125,23 +125,23 @@ namespace UXF
             AuthenticatedRequest(savePath, text);
 
             // return a string representing the location of the data. Will be stored in the trial_results output.
-            return savePath; 
+            return savePath;
         }
 
         public override string HandleBytes(byte[] bytes, string experiment, string ppid, int sessionNum, string dataName, UXFDataType dataType, int optionalTrialNum = 0)
         {
             // get data as text
             string text = System.Text.Encoding.UTF8.GetString(bytes);
-            
-            string ext  = Path.GetExtension(dataName);
+
+            string ext = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string directory = GetSessionPathRelative(experiment, ppid, sessionNum);
             if (dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.ToLower());
 
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.txt", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.txt" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             savePath = savePath.Replace('\\', '/');
 
@@ -149,7 +149,7 @@ namespace UXF
             AuthenticatedRequest(savePath, text);
 
             // return a string representing the location of the data. Will be stored in the trial_results output.
-            return savePath; 
+            return savePath;
         }
 
         public override void CleanUp()

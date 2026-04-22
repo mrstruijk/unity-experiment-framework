@@ -53,9 +53,10 @@ namespace UXF.UI
             {
                 if (session == null)
                     return false;
-                return session.ActiveDataHandlers
-                    .Where((dh) => dh is LocalFileDataHander)
-                    .Any(dh => ((LocalFileDataHander)dh).dataSaveLocation == DataSaveLocation.AcquireFromUI);
+                foreach (var dh in session.ActiveDataHandlers)
+                    if (dh is LocalFileDataHander lf && lf.dataSaveLocation == DataSaveLocation.AcquireFromUI)
+                        return true;
+                return false;
             }
         }
 
@@ -65,13 +66,17 @@ namespace UXF.UI
             {
                 if (session == null)
                 {
-                    return new List<LocalFileDataHander>();
+                    yield break;
                 }
                 else
                 {
-                    return session.ActiveDataHandlers
-                        .Where((dh) => dh is LocalFileDataHander)
-                        .Cast<LocalFileDataHander>();
+                    foreach (var dh in session.ActiveDataHandlers)
+                    {
+                        if (dh is LocalFileDataHander lf)
+                        {
+                            yield return lf;
+                        }
+                    }
                 }
             }
         }
@@ -204,7 +209,7 @@ namespace UXF.UI
             yield return GetJsonUrl();
             if (jsonText == string.Empty)
             {
-                Utilities.UXFDebugLogErrorFormat("Error downloading data from URL: {0}. Using blank settings instead.", jsonURL);
+                Utilities.UXFDebugLogError($"Error downloading data from URL: {jsonURL}. Using blank settings instead.");
             }
             try
             {
@@ -212,7 +217,7 @@ namespace UXF.UI
             }
             catch (InvalidCastException)
             {
-                Utilities.UXFDebugLogErrorFormat("Text downloaded from {0} is cannot be parsed, empty settings used instead. Check the data is valid json ({1})", jsonURL, jsonText);
+                Utilities.UXFDebugLogError($"Text downloaded from {jsonURL} is cannot be parsed, empty settings used instead. Check the data is valid json ({jsonText})");
             }
 
             autoStartRoutine = null;
@@ -272,7 +277,7 @@ namespace UXF.UI
                 else if (!Directory.Exists(localFilePath))
                 {
                     localFilePathElement.DisplayFault();
-                    Utilities.UXFDebugLogErrorFormat("Cannot start session - local data directory {0} does not exist.", localFilePath);
+                    Utilities.UXFDebugLogError($"Cannot start session - local data directory {localFilePath} does not exist.");
                     error = true;
                 }
 
@@ -362,7 +367,7 @@ namespace UXF.UI
                     Dictionary<string, object> deserializedJson = (Dictionary<string, object>)MiniJSON.Json.Deserialize(settingsText);
                     if (deserializedJson == null)
                     {
-                        Utilities.UXFDebugLogErrorFormat("Cannot deserialize json file: {0}.", settingsPath);
+                        Utilities.UXFDebugLogError($"Cannot deserialize json file: {settingsPath}.");
                         settingsElement.DisplayFault();
                         error = true;
                     }
@@ -376,7 +381,7 @@ namespace UXF.UI
                     if (jsonText == string.Empty)
                     {
                         error = true;
-                        Utilities.UXFDebugLogErrorFormat("Error downloading data from URL: {0}. Using blank settings instead.", jsonURL);
+Utilities.UXFDebugLogError($"Error downloading data from URL: {jsonURL}. Using blank settings instead.");
                         newSettings = Settings.empty;
                     }
                     try
@@ -386,7 +391,7 @@ namespace UXF.UI
                     catch (InvalidCastException)
                     {
                         error = true;
-                        Utilities.UXFDebugLogErrorFormat("Text downloaded from {0} is cannot be parsed, empty settings used instead. Check the data is valid json ({1})", jsonURL, jsonText);
+Utilities.UXFDebugLogError($"Text downloaded from {jsonURL} is cannot be parsed, empty settings used instead. Check the data is valid json ({jsonText})");
                         newSettings = Settings.empty;
                     }
                     break;
@@ -412,12 +417,7 @@ namespace UXF.UI
             {
                 Popup newPopup = new Popup()
                 {
-                    message = string.Format(
-                        "{0} - {1} - Session #{2} already exists! Press OK to start the session anyway, data may be overwritten.",
-                        newExperimentName,
-                        newPpid,
-                        sessionNum
-                    ),
+                    message = $"{newExperimentName} - {newPpid} - Session #{sessionNum} already exists! Press OK to start the session anyway, data may be overwritten.",
                     messageType = MessageType.Warning,
                     onOK = () =>
                     {
@@ -462,10 +462,10 @@ namespace UXF.UI
 
         public void GenerateSidebar()
         {
-            Transform[] children = sidebarContentTransform
-                .Cast<Transform>()
-                .Select(c => c.transform)
-                .ToArray();
+            int childCount = sidebarContentTransform.childCount;
+            Transform[] children = new Transform[childCount];
+            for (int i = 0; i < childCount; i++)
+                children[i] = sidebarContentTransform.GetChild(i);
 
             foreach (Transform child in children)
             {
@@ -518,7 +518,7 @@ namespace UXF.UI
             {
                 if (entry.element == null)
                 {
-                    validityList[i] = (entry, false, string.Format("The UI element for '{0}' ({1}) has not been generated.", entry.displayName, entry.internalName));
+                    validityList[i] = (entry, false, $"The UI element for '{entry.displayName}' ({entry.internalName}) has not been generated.");
                 }
                 else
                 {
@@ -530,7 +530,7 @@ namespace UXF.UI
                     }
                     string reason = valid ?
                         string.Empty
-                        : string.Format("The data in the UI element '{0}' ({1}) cannot be converted to selected data type ({2}).", entry.displayName, entry.internalName, entry.dataType);
+                        : $"The data in the UI element '{entry.displayName}' ({entry.internalName}) cannot be converted to selected data type ({entry.dataType}).";
                     validityList[i] = (entry, valid, reason);
                 }
                 i++;
@@ -614,10 +614,10 @@ namespace UXF.UI
         {
             reasonText = string.Empty;
 
-            var numEmpties = participantDataPoints
-                .Select(pdp => pdp.internalName.Replace(" ", ""))
-                .Where(internalNameNoSpaces => internalNameNoSpaces == string.Empty)
-                .Count();
+            int numEmpties = 0;
+            foreach (var pdp in participantDataPoints)
+                if (pdp.internalName.Replace(" ", "") == string.Empty)
+                    numEmpties++;
 
             if (numEmpties == 1)
             {
@@ -626,15 +626,15 @@ namespace UXF.UI
             }
             else if (numEmpties > 1)
             {
-                reasonText = string.Format("In the items in the Participant Datapoints list, there are {0} items with empty internal names. Please enter an internal name for these items.", numEmpties);
+                reasonText = $"In the items in the Participant Datapoints list, there are {numEmpties} items with empty internal names. Please enter an internal name for these items.";
                 return false;
             }
 
-            var duplicates = participantDataPoints
-                .GroupBy(pdp => pdp.internalName)
-                .Where(g => g.Count() > 1)
-                .Select(y => y.Key)
-                .ToList();
+            var seen = new HashSet<string>();
+            var duplicates = new List<string>();
+            foreach (var pdp in participantDataPoints)
+                if (!seen.Add(pdp.internalName) && !duplicates.Contains(pdp.internalName))
+                    duplicates.Add(pdp.internalName);
 
             if (duplicates.Count > 0)
             {
@@ -667,6 +667,7 @@ namespace UXF.UI
                 Utilities.UXFDebugLogError(www.error);
                 yield break;
             }
+
             jsonText = System.Text.Encoding.UTF8.GetString(www.downloadHandler.data);
         }
     }

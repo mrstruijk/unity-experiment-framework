@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,9 +61,8 @@ namespace UXF
         public void UpdateWithDict(Dictionary<string, object> dict)
         {
             // add all keys to new dictionary
-            dict
-                .ToList()
-                .ForEach(x => baseDict[x.Key] = x.Value);
+            foreach (var kvp in dict)
+                baseDict[kvp.Key] = kvp.Value;
         }
 
         /// <summary>
@@ -132,7 +131,10 @@ namespace UXF
         {
             try
             {
-                return GetObjectList(key).Select(v => Convert.ToBoolean(v)).ToList();
+                var raw = GetObjectList(key);
+                var result = new List<bool>(raw.Count);
+                foreach (var v in raw) result.Add(Convert.ToBoolean(v));
+                return result;
             }
             catch (InvalidCastException)
             {
@@ -149,7 +151,10 @@ namespace UXF
         {
             try
             {
-                return GetObjectList(key).Select(v => Convert.ToInt32(v)).ToList();
+                var raw = GetObjectList(key);
+                var result = new List<int>(raw.Count);
+                foreach (var v in raw) result.Add(Convert.ToInt32(v));
+                return result;
             }
             catch (InvalidCastException)
             {
@@ -166,7 +171,10 @@ namespace UXF
         {
             try
             {
-                return GetObjectList(key).Select(v => Convert.ToSingle(v)).ToList();
+                var raw = GetObjectList(key);
+                var result = new List<float>(raw.Count);
+                foreach (var v in raw) result.Add(Convert.ToSingle(v));
+                return result;
             }
             catch (InvalidCastException)
             {
@@ -183,7 +191,10 @@ namespace UXF
         {
             try
             {
-                return GetObjectList(key).Select(v => Convert.ToInt64(v)).ToList();
+                var raw = GetObjectList(key);
+                var result = new List<long>(raw.Count);
+                foreach (var v in raw) result.Add(Convert.ToInt64(v));
+                return result;
             }
             catch (InvalidCastException)
             {
@@ -200,7 +211,10 @@ namespace UXF
         {
             try
             {
-                return GetObjectList(key).Select(v => Convert.ToDouble(v)).ToList();
+                var raw = GetObjectList(key);
+                var result = new List<double>(raw.Count);
+                foreach (var v in raw) result.Add(Convert.ToDouble(v));
+                return result;
             }
             catch (InvalidCastException)
             {
@@ -217,7 +231,10 @@ namespace UXF
         {
             try
             {
-                return GetObjectList(key).Select(v => Convert.ToString(v)).ToList();
+                var raw = GetObjectList(key);
+                var result = new List<string>(raw.Count);
+                foreach (var v in raw) result.Add(Convert.ToString(v));
+                return result;
             }
             catch (InvalidCastException)
             {
@@ -234,7 +251,10 @@ namespace UXF
         {
             try
             {
-                return GetObjectList(key).Select(v => (Dictionary<string, object>)v).ToList();
+                var raw = GetObjectList(key);
+                var result = new List<Dictionary<string, object>>(raw.Count);
+                foreach (var v in raw) result.Add((Dictionary<string, object>)v);
+                return result;
             }
             catch (InvalidCastException)
             {
@@ -411,12 +431,9 @@ namespace UXF
                     return parentSettingsContainer.settings.Get(key);
                 }
                 throw new KeyNotFoundException(
-                    string.Format(
-                        "The key \"{0}\" was not found in the settings heirarchy. "
-                         + "Use UXF Session Debugger (UXF menu at top of unity editor) "
-                         + "to check your settings are being applied correctly.",
-                         key
-                    )
+                    $"The key \"{key}\" was not found in the settings heirarchy. "
+                     + "Use UXF Session Debugger (UXF menu at top of unity editor) "
+                     + "to check your settings are being applied correctly."
                 );
             }
         }

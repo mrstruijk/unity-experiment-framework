@@ -81,15 +81,19 @@ namespace UXF
         {
             if (newRow == null) throw new ArgumentNullException("newRow");
 
-            bool sameKeys = (dict
-                .Keys
-                .All(
-                    newRow
-                    .Select(item => item.columnName)
-                    .Contains
-                    ))
-                &&
-                (newRow.Count == dict.Keys.Count);
+            bool sameKeys = newRow.Count == dict.Count;
+            if (sameKeys)
+            {
+                foreach (var key in dict.Keys)
+                {
+                    bool found = false;
+                    foreach (var item in newRow)
+                    {
+                        if (item.columnName == key) { found = true; break; }
+                    }
+                    if (!found) { sameKeys = false; break; }
+                }
+            }
 
             if (!sameKeys)
             {
@@ -114,10 +118,10 @@ namespace UXF
         /// <returns></returns>
         public int CountRows()
         {
-            string[] keyArray = dict.Keys.ToArray();
-            if (keyArray.Length == 0) return 0;
-
-            return dict[keyArray[0]].Count();
+            if (dict.Count == 0) return 0;
+            foreach (var list in dict.Values)
+                return list.Count;
+            return 0;
         }
 
         /// <summary>
@@ -131,12 +135,12 @@ namespace UXF
             string[] headers = Headers;
             string[] lines = new string[CountRows() + 1];
             lines[0] = string.Join(culture.TextInfo.ListSeparator, headers);
+            string[] values = new string[headers.Length];
             for (int i = 1; i < lines.Length; i++)
             {
-                lines[i] = string.Join(culture.TextInfo.ListSeparator,
-                    headers
-                    .Select(h => FormatItem(dict[h][i - 1], culture, decimalFormat))
-                );
+                for (int j = 0; j < headers.Length; j++)
+                    values[j] = FormatItem(dict[headers[j]][i - 1], culture, decimalFormat);
+                lines[i] = string.Join(culture.TextInfo.ListSeparator, values);
             }
 
             return lines;
@@ -183,15 +187,15 @@ namespace UXF
         public List<Dictionary<string, object>> GetAsListOfDict()
         {
             int numRows = CountRows();
+            string[] headers = Headers;
             List<Dictionary<string, object>> listCopy = new List<Dictionary<string, object>>(numRows);
-
             for (int i = 0; i < numRows; i++)
             {
-                listCopy.Add(
-                    Headers.ToDictionary(h => h, h => dict[h][i])
-                );
+                var row = new Dictionary<string, object>(headers.Length);
+                foreach (var h in headers)
+                    row[h] = dict[h][i];
+                listCopy.Add(row);
             }
-
             return listCopy;
         }
     }

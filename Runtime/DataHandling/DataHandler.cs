@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -94,9 +93,13 @@ namespace UXF
 
         public static IEnumerable<UXFDataType> GetValidDataTypes(this UXFDataLevel level)
         {
-            return typeLevelMapping
-                .Where(kvp => kvp.Value == level)
-                .Select(kvp => kvp.Key);
+            foreach (var kvp in typeLevelMapping)
+            {
+                if (kvp.Value == level)
+                {
+                    yield return kvp.Key;
+                }
+            }
         }
     }
 

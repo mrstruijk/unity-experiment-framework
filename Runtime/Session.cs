@@ -1,17 +1,16 @@
-using System;
-using System.Linq;
-using System.IO;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Collections.Specialized;
-using UnityEngine.Events;
+using System.IO;
 using SubjectNerd.Utilities;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace UXF
 {
     /// <summary>
-    /// The Session represents a single "run" of an experiment, and contains all information about that run. 
+    /// The Session represents a single "run" of an experiment, and contains all information about that run.
     /// </summary>
     [ExecuteInEditMode]
     public class Session : MonoBehaviour, IExperimentUnit, IDataAssociatable
@@ -33,7 +32,7 @@ namespace UXF
         /// </summary>
         [Tooltip("Enable to automatically end the session when the final trial has ended.")]
         public bool endAfterLastTrial = false;
-        
+
         /// <summary>
         /// If enabled, you do not need to reference this session component in a public field, you can simply call "Session.instance". This object will be destroyed if another session component is the main instance.
         /// </summary>
@@ -218,15 +217,27 @@ namespace UXF
         /// <summary>
         /// Returns a list of trials for all blocks.  Modifying the order of this list will not affect trial order. Modify block.trials to change order within blocks.
         /// </summary>
-        public IEnumerable<Trial> Trials { get { return blocks.SelectMany(b => b.trials); } }
-        
+        public IEnumerable<Trial> Trials
+        {
+            get
+            {
+                foreach (var block in blocks)
+                {
+                    foreach (var trial in block.trials)
+                    {
+                        yield return trial;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// The path in which the experiment data are stored.
         /// </summary>
         public string BasePath { get; private set; }
 
         /// <summary>
-        /// Path to the folder used for reading settings and storing the output. 
+        /// Path to the folder used for reading settings and storing the output.
         /// </summary>
         public string ExperimentPath { get { return Path.Combine(Path.GetFullPath(BasePath), experimentName); } }
 
@@ -244,7 +255,13 @@ namespace UXF
             {
                 if (_headersDirty || _cachedHeaders == null)
                 {
-                    _cachedHeaders = baseHeaders.Concat(settingsToLog).Concat(customHeaders).Distinct().ToList();
+                    var headersList = new List<string>(baseHeaders.Count + settingsToLog.Count + customHeaders.Count);
+                    headersList.AddRange(baseHeaders);
+                    foreach (var h in settingsToLog)
+                        if (!headersList.Contains(h)) headersList.Add(h);
+                    foreach (var h in customHeaders)
+                        if (!headersList.Contains(h)) headersList.Add(h);
+                    _cachedHeaders = headersList;
                     _headersDirty = false;
                 }
                 return _cachedHeaders;
@@ -274,7 +291,7 @@ namespace UXF
         /// Reference to the associated DataHandlers which handles saving data to the cloud, etc.
         /// </summary>
         [Reorderable]
-        public DataHandler[] dataHandlers = new DataHandler[]{};
+        public DataHandler[] dataHandlers = new DataHandler[] { };
 
         private List<DataHandler> _activeDataHandlers = new List<DataHandler>();
 
@@ -302,7 +319,7 @@ namespace UXF
             foreach (var block in blocks)
                 _trialsCache.AddRange(block.trials);
         }
-         
+
         /// <summary>
         /// Should data be saved for this session?
         /// </summary>
@@ -313,7 +330,7 @@ namespace UXF
         }
 
         /// <summary>
-        /// Provide references to other components 
+        /// Provide references to other components
         /// </summary>
         void Awake()
         {
@@ -326,7 +343,7 @@ namespace UXF
                 }
                 instance = this;
             }
-            if (dontDestroyOnLoadNewScene && Application.isPlaying) DontDestroyOnLoad(gameObject);            
+            if (dontDestroyOnLoadNewScene && Application.isPlaying) DontDestroyOnLoad(gameObject);
             if (endAfterLastTrial) onTrialEnd.AddListener(EndIfLastTrial);
         }
 
@@ -401,7 +418,7 @@ namespace UXF
         }
 
         /// <summary>
-        /// Create and return 1 Block, which then gets automatically added to Session.blocks  
+        /// Create and return 1 Block, which then gets automatically added to Session.blocks
         /// </summary>
         /// <returns></returns>
         public Block CreateBlock()
@@ -411,7 +428,7 @@ namespace UXF
 
 
         /// <summary>
-        /// Create and return block containing a number of trials, which then gets automatically added to Session.blocks  
+        /// Create and return block containing a number of trials, which then gets automatically added to Session.blocks
         /// </summary>
         /// <param name="numberOfTrials">Number of trials. Must be greater than or equal to 1.</param>
         /// <returns></returns>
@@ -482,7 +499,7 @@ namespace UXF
         /// Begins next trial (if one exists). Useful to call from an inspector event
         /// </summary>
         public void BeginNextTrialSafe()
-        {            
+        {
             if (CurrentTrial != LastTrial)
             {
                 BeginNextTrial();
@@ -522,7 +539,7 @@ namespace UXF
         /// </summary>
         /// <returns></returns>
         Trial GetFirstTrial()
-        {   
+        {
             Block firstBlock;
             try
             {
@@ -590,11 +607,8 @@ namespace UXF
         {
             if (dataType.GetDataLevel() != UXFDataLevel.PerSession)
             {
-                Utilities.UXFDebugLogErrorFormat(
-                    "Error trying to save data '{0}' of type UXFDataType.{1} associated with the Session. The valid types for this method are {2}. Reverting to type UXFDataType.OtherSessionData.",
-                    dataName,
-                    dataType,
-                    string.Join(", ", UXFDataLevel.PerSession.GetValidDataTypes())
+                Utilities.UXFDebugLogError(
+                    $"Error trying to save data '{dataName}' of type UXFDataType.{dataType} associated with the Session. The valid types for this method are {string.Join(", ", UXFDataLevel.PerSession.GetValidDataTypes())}. Reverting to type UXFDataType.OtherSessionData."
                     );
                 return false;
             }
@@ -614,7 +628,7 @@ namespace UXF
         {
             if (!CheckDataTypeIsValid(dataName, dataType)) dataType = UXFDataType.OtherSessionData;
 
-            foreach(var dataHandler in ActiveDataHandlers)
+            foreach (var dataHandler in ActiveDataHandlers)
             {
                 string location = dataHandler.HandleDataTable(table, experimentName, ppid, number, dataName, dataType);
             }
@@ -629,8 +643,8 @@ namespace UXF
         public void SaveJSONSerializableObject(List<object> serializableObject, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData)
         {
             if (!CheckDataTypeIsValid(dataName, dataType)) dataType = UXFDataType.OtherSessionData;
-            
-            foreach(var dataHandler in ActiveDataHandlers)
+
+            foreach (var dataHandler in ActiveDataHandlers)
             {
                 string location = dataHandler.HandleJSONSerializableObject(serializableObject, experimentName, ppid, number, dataName, dataType);
             }
@@ -646,7 +660,7 @@ namespace UXF
         {
             if (!CheckDataTypeIsValid(dataName, dataType)) dataType = UXFDataType.OtherSessionData;
 
-            foreach(var dataHandler in ActiveDataHandlers)
+            foreach (var dataHandler in ActiveDataHandlers)
             {
                 string location = dataHandler.HandleJSONSerializableObject(serializableObject, experimentName, ppid, number, dataName, dataType);
             }
@@ -662,7 +676,7 @@ namespace UXF
         {
             if (!CheckDataTypeIsValid(dataName, dataType)) dataType = UXFDataType.OtherSessionData;
 
-            foreach(var dataHandler in ActiveDataHandlers)
+            foreach (var dataHandler in ActiveDataHandlers)
             {
                 string location = dataHandler.HandleText(text, experimentName, ppid, number, dataName, dataType);
             }
@@ -677,8 +691,8 @@ namespace UXF
         public void SaveBytes(byte[] bytes, string dataName, UXFDataType dataType = UXFDataType.OtherSessionData)
         {
             if (!CheckDataTypeIsValid(dataName, dataType)) dataType = UXFDataType.OtherSessionData;
-            
-            foreach(var dataHandler in ActiveDataHandlers)
+
+            foreach (var dataHandler in ActiveDataHandlers)
             {
                 string location = dataHandler.HandleBytes(bytes, experimentName, ppid, number, dataName, dataType);
             }
@@ -697,7 +711,7 @@ namespace UXF
                     try { CurrentTrial.End(); }
                     catch (Exception e) { Debug.LogException(e); }
                 }
-                
+
                 SaveResults();
 
                 try { preSessionEnd.Invoke(this); }
@@ -714,7 +728,9 @@ namespace UXF
                     // copy participant details to session folder
                     // we convert to a DataTable because we know the dictionary will be "flat" (one value per key)
 
-                    UXFDataTable ppDetailsTable = new UXFDataTable(participantDetails.Keys.ToArray());
+                    string[] ppKeys = new string[participantDetails.Count];
+                    participantDetails.Keys.CopyTo(ppKeys, 0);
+                    UXFDataTable ppDetailsTable = new UXFDataTable(ppKeys);
                     var row = new UXFDataRow();
                     foreach (var kvp in participantDetails) row.Add((kvp.Key, kvp.Value));
                     ppDetailsTable.AddCompleteRow(row);
@@ -729,7 +745,7 @@ namespace UXF
                     try { dataHandler.CleanUp(); }
                     catch (Exception e) { Debug.LogException(e); }
                 }
-                
+
                 try { onSessionEnd.Invoke(this); }
                 catch (Exception e) { Debug.LogException(e); }
 
@@ -748,7 +764,7 @@ namespace UXF
         {
             Trial.WaitForTasks();
 
-            List<Trial> trialsList = Trials.ToList();
+            List<Trial> trialsList = _trialsCache;
 
             // generate list of all headers possible
             // hashset keeps unique set of keys
@@ -758,7 +774,7 @@ namespace UXF
                     foreach (string key in t.result.Keys)
                         resultsHeaders.Add(key);
 
-            UXFDataTable table = new UXFDataTable(trialsList.Count, resultsHeaders.ToArray());
+            UXFDataTable table = new UXFDataTable(trialsList.Count, new List<string>(resultsHeaders).ToArray());
             foreach (Trial t in trialsList)
             {
                 if (t.result != null && t.saveData)
@@ -768,18 +784,18 @@ namespace UXF
                     {
                         if (t.result.ContainsKey(h) && t.result[h] != null)
                         {
-                            row.Add(( h, t.result[h] ));
+                            row.Add((h, t.result[h]));
                         }
                         else
                         {
-                            row.Add(( h, string.Empty ));
+                            row.Add((h, string.Empty));
                         }
                     }
                     table.AddCompleteRow(row);
                 }
             }
 
-            SaveDataTable(table, "trial_results", dataType: UXFDataType.TrialResults);            
+            SaveDataTable(table, "trial_results", dataType: UXFDataType.TrialResults);
         }
 
         void OnApplicationQuit()

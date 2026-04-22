@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -86,11 +86,7 @@ namespace UXF
             if (quitting)
             {
                 throw new System.InvalidOperationException(
-                    string.Format(
-                        "Cannot add action to FileSaver, is currently quitting. Action: {0}.{1}",
-                        action.Method.ReflectedType.FullName,
-                        action.Method.Name
-                        )
+                    "Cannot add action to FileSaver, is currently quitting."
                 );
             }
 
@@ -118,7 +114,7 @@ namespace UXF
                 }
                 catch (IOException e)
                 {
-                    Utilities.UXFDebugLogError(string.Format("Error, file may be in use! Exception: {0}", e));
+                    Utilities.UXFDebugLogError($"Error, file may be in use! Exception: {e}");
                 }
                 catch (System.Exception e)
                 {
@@ -153,17 +149,17 @@ namespace UXF
             string ext  = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string[] lines = table.GetCSVLines();
             
             string directory = GetSessionPath(experiment, ppid, sessionNum);
             if (sortDataIntoFolders && dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.GetFolderName());
             Directory.CreateDirectory(directory);
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.csv", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.csv" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             
-            if (verboseDebug) Utilities.UXFDebugLogFormat("Queuing save of file: {0}", savePath);
+            if (verboseDebug) Utilities.UXFDebugLog($"Queuing save of file: {savePath}");
 
             ManageInWorker(() => { File.WriteAllLines(savePath, lines); });
             return GetRelativePath(StoragePath, savePath);
@@ -174,17 +170,17 @@ namespace UXF
             string ext  = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string text = MiniJSON.Json.Serialize(serializableObject);
 
             string directory = GetSessionPath(experiment, ppid, sessionNum);
             if (sortDataIntoFolders && dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.GetFolderName());
             Directory.CreateDirectory(directory);
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.json", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.json" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             
-            if (verboseDebug) Utilities.UXFDebugLogFormat("Queuing save of file: {0}", savePath);
+            if (verboseDebug) Utilities.UXFDebugLog($"Queuing save of file: {savePath}");
 
             ManageInWorker(() => { File.WriteAllText(savePath, text); });
             return GetRelativePath(StoragePath, savePath);;
@@ -195,17 +191,17 @@ namespace UXF
             string ext  = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string text = MiniJSON.Json.Serialize(serializableObject);
 
             string directory = GetSessionPath(experiment, ppid, sessionNum);
             if (sortDataIntoFolders && dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.GetFolderName());
             Directory.CreateDirectory(directory);
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.json", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.json" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             
-            if (verboseDebug) Utilities.UXFDebugLogFormat("Queuing save of file: {0}", savePath);
+            if (verboseDebug) Utilities.UXFDebugLog($"Queuing save of file: {savePath}");
 
             ManageInWorker(() => { File.WriteAllText(savePath, text); });
             return GetRelativePath(StoragePath, savePath);;
@@ -216,16 +212,16 @@ namespace UXF
             string ext  = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string directory = GetSessionPath(experiment, ppid, sessionNum);
             if (sortDataIntoFolders && dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.GetFolderName());
             Directory.CreateDirectory(directory);
 
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.txt", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.txt" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
             
-            if (verboseDebug) Utilities.UXFDebugLogFormat("Queuing save of file: {0}", savePath);
+            if (verboseDebug) Utilities.UXFDebugLog($"Queuing save of file: {savePath}");
 
             ManageInWorker(() => { File.WriteAllText(savePath, text); });
             return GetRelativePath(StoragePath, savePath);;
@@ -236,16 +232,16 @@ namespace UXF
             string ext  = Path.GetExtension(dataName);
             dataName = Path.GetFileNameWithoutExtension(dataName);
 
-            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = string.Format("{0}_T{1:000}", dataName, optionalTrialNum);
+            if (dataType.GetDataLevel() == UXFDataLevel.PerTrial) dataName = $"{dataName}_T{optionalTrialNum:000}";
 
             string directory = GetSessionPath(experiment, ppid, sessionNum);
             if (sortDataIntoFolders && dataType != UXFDataType.TrialResults) directory = Path.Combine(directory, dataType.GetFolderName());
             Directory.CreateDirectory(directory);
 
-            string name = string.IsNullOrEmpty(ext) ? string.Format("{0}.txt", dataName) : string.Format("{0}{1}", dataName, ext);
+            string name = string.IsNullOrEmpty(ext) ? $"{dataName}.txt" : $"{dataName}{ext}";
             string savePath = Path.Combine(directory, name);
 
-            if (verboseDebug) Utilities.UXFDebugLogFormat("Queuing save of file: {0}", savePath);
+            if (verboseDebug) Utilities.UXFDebugLog($"Queuing save of file: {savePath}");
 
             ManageInWorker(() => { File.WriteAllBytes(savePath, bytes); });
             return GetRelativePath(StoragePath, savePath);
@@ -259,7 +255,7 @@ namespace UXF
             {
                 storageLocationSafe = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "UXF_Data");
                 Directory.CreateDirectory(storageLocationSafe);
-                Utilities.UXFDebugLogErrorFormat("Selected storage location ({0}) does not exist! Defaulting to {1}.", base.StoragePath, storageLocationSafe);
+                Utilities.UXFDebugLogError($"Selected storage location ({base.StoragePath}) does not exist! Defaulting to {storageLocationSafe}.");
             }
             return Path.Combine(storageLocationSafe, experiment, ppid, SessionNumToName(sessionNum));
         }
@@ -271,14 +267,14 @@ namespace UXF
             {
                 storageLocationSafe = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "UXF_Data");
                 Directory.CreateDirectory(storageLocationSafe);
-                Utilities.UXFDebugLogErrorFormat("Selected storage location ({0}) does not exist! Defaulting to {1}.", base.StoragePath, storageLocationSafe);
+                Utilities.UXFDebugLogError($"Selected storage location ({base.StoragePath}) does not exist! Defaulting to {storageLocationSafe}.");
             }
             return Path.Combine(storageLocationSafe, session.experimentName, session.ppid, SessionNumToName(session.number));
         }
 
         public static string SessionNumToName(int num)
         {
-            return string.Format("S{0:000}", num);
+            return $"S{num:000}";
         }
 
         /// <summary>

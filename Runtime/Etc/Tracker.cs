@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace UXF
 {
@@ -42,7 +41,7 @@ namespace UXF
             {
                 Debug.AssertFormat(MeasurementDescriptor.Length > 0,
                     "No measurement descriptor has been specified for this Tracker!");
-                return string.Join("_", new string[] { objectName, MeasurementDescriptor });
+                return objectName + "_" + MeasurementDescriptor;
             }
         }
 
@@ -156,8 +155,9 @@ namespace UXF
                     " This will dump exisiting data! " +
                     $"If you want to restart a paused tracker, use '{nameof(ResumeRecording)}()' instead.");
             }
-            var header = baseHeaders.Concat(CustomHeader);
-            Data = new UXFDataTable(header.ToArray());
+            var headerList = new List<string>(baseHeaders);
+            headerList.AddRange(CustomHeader);
+            Data = new UXFDataTable(headerList.ToArray());
             currentState = TrackerState.Recording;
         }
 
