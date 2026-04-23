@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Globalization;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace UXF
@@ -11,7 +10,16 @@ namespace UXF
     /// </summary>
     public class UXFDataTable
     {
-        public string[] Headers { get { return dict.Keys.ToArray(); } }
+        public string[] Headers
+        {
+            get
+            {
+                var keys = dict.Keys;
+                var result = new string[keys.Count];
+                keys.CopyTo(result, 0);
+                return result;
+            }
+        }
         private Dictionary<string, List<object>> dict;
 
         /// <summary>
@@ -210,7 +218,16 @@ namespace UXF
         /// Gets trhe headers of the row.
         /// </summary>
         /// <returns>IEnumerable of strings representing the headers of the row.</returns>
-        public IEnumerable<string> Headers { get { return this.Select(kvp => kvp.columnName); } }
+        public IEnumerable<string> Headers
+        {
+            get
+            {
+                foreach (var kvp in this)
+                {
+                    yield return kvp.columnName;
+                }
+            }
+        }
     }
 
 }

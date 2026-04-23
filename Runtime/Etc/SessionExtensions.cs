@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,12 +20,21 @@ namespace UXF
             if (session == null) throw new ArgumentNullException("session");
 
             // setting keys are the same as headers, except with block num removed
-            var settingsKeys = table.Headers
-                .Where(h => h != "block_num")
-                .ToArray();
-
-            // if table does not contain block_num, we will use value of 1 later
-            bool specifiedBlockNum = table.Headers.Contains("block_num");
+            var headers = table.Headers;
+            var settingsKeysList = new List<string>(headers.Length);
+            bool specifiedBlockNum = false;
+            foreach (var h in headers)
+            {
+                if (h == "block_num")
+                {
+                    specifiedBlockNum = true;
+                }
+                else
+                {
+                    settingsKeysList.Add(h);
+                }
+            }
+            var settingsKeys = settingsKeysList.ToArray();
 
             // loop down rows, creating trial for each one
             int rowNum = 0;
@@ -45,7 +53,7 @@ namespace UXF
                 }
 
                 // keep creating blocks until we have enough
-                while (session.blocks.Count() < blockNum)
+                while (session.blocks.Count < blockNum)
                 {
                     session.CreateBlock();
                 }

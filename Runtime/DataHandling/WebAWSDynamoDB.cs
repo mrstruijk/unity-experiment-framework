@@ -5,7 +5,6 @@ using UnityEngine.Events;
 using System;
 using System.IO;
 using System.Threading;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace UXF
@@ -148,7 +147,16 @@ namespace UXF
                 string primaryKeyValue = GetFormattedPrimaryKeyValue(ppid, sessionNum, dataName);
                 string tableName = GetTableName(experiment, dataType);
 
-                if (!table.Headers.Contains("trial_num"))
+                bool hasTrialNum = false;
+                foreach (var header in table.Headers)
+                {
+                    if (header == "trial_num")
+                    {
+                        hasTrialNum = true;
+                        break;
+                    }
+                }
+                if (!hasTrialNum)
                 {
                     Utilities.UXFDebugLogError("Data supplied is supposed to be per-trial but does not contain 'trial_num' column!");
                     return "error";
@@ -165,7 +173,12 @@ namespace UXF
                 var batches = dataList.Batch(25);
                 foreach (var batch in batches)
                 {
-                    string req = MiniJSON.Json.Serialize(batch.ToList());
+                    var batchList = new List<object>();
+                    foreach (var item in batch)
+                    {
+                        batchList.Add(item);
+                    }
+                    string req = MiniJSON.Json.Serialize(batchList);
                     DDB_BatchWriteItem(tableName, req, _cachedName);
                 }
                 return $"dynamodb:{tableName}:{primaryKeyValue}";
