@@ -254,7 +254,7 @@ namespace UXF.UI
                     newExperimentName = experimentName;
                     break;
                 default:
-                    throw new Exception();
+                    throw new Exception("Invalid PPIDMode.");
             }
 
             // DATA PATH
@@ -320,7 +320,7 @@ namespace UXF.UI
                     newPpid = GenerateUniquePPID();
                     break;
                 default:
-                    throw new Exception();
+                    throw new Exception("Invalid PPIDMode.");
             }
 
             // PARTICIPANT DETAILS
@@ -399,7 +399,7 @@ Utilities.UXFDebugLogError($"Text downloaded from {jsonURL} is cannot be parsed,
                     newSettings = Settings.empty;
                     break;
                 default:
-                    throw new Exception();
+                    throw new Exception("Invalid PPIDMode.");
             }
 
             uiStartRoutine = null;

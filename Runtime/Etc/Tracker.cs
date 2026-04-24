@@ -122,7 +122,7 @@ namespace UXF
 
             UXFDataRow row = GetPooledRow();
             GetCurrentValues(row);
-            row.Add(("time", Time.time));
+            row.Add(("time", Time.time.ToString()));
             Data.AddCompleteRow(row);
             ReturnRowToPool(row);
         }

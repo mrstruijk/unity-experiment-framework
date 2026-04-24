@@ -46,7 +46,7 @@ namespace UXF.UI
                         content.contentType = InputField.ContentType.Standard;
                         break;
                     default:
-                        throw new Exception("Data type incompatible with TextElement");
+                        throw new Exception($"Data type {dType} is incompatible with TextElement. Expected Float, Int, or String.");
                 }
             };
 

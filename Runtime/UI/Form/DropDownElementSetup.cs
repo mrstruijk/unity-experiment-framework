@@ -25,7 +25,7 @@ namespace UXF.UI
                     UpdateOptions(valueList);
                 else if (value is Tuple<int, IEnumerable<string>> selectedAndValueList)
                     UpdateOptions(selectedAndValueList.Item1, selectedAndValueList.Item2);
-                else throw new InvalidCastException();
+                else throw new InvalidCastException($"Expected IEnumerable<string> or Tuple<int, IEnumerable<string>>, but got {value?.GetType().Name ?? "null"}.");
             };
 
             GetComponent<FormElement>().Initialise(get, set);
