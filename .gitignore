@@ -68,4 +68,6 @@ example_output/*
 
 Assets/MyAWSCredentials.asset*
 
-UserSettings/
+.DS_Store
+AGENTS.md
+AGENTS.md.meta
