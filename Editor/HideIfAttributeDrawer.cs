@@ -107,30 +107,82 @@ namespace BasteRainGames
             var targetType = typeof(CustomPropertyDrawer).GetField("m_Type", BindingFlags.Instance | BindingFlags.NonPublic);
             var useForChildren = typeof(CustomPropertyDrawer).GetField("m_UseForChildren", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes());
-
-            foreach (Type type in types)
+            try
             {
-                if (propertyDrawerType.IsAssignableFrom(type))
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                if (assemblies == null)
                 {
-                    var customPropertyDrawers = type.GetCustomAttributes(true).OfType<CustomPropertyDrawer>().ToList();
-                    foreach (var propertyDrawer in customPropertyDrawers)
-                    {
-                        var targetedType = (Type)targetType.GetValue(propertyDrawer);
-                        typeToDrawerType[targetedType] = type;
+                    Debug.LogError("AppDomain.CurrentDomain.GetAssemblies() returned null.");
+                    return;
+                }
 
-                        var useThisForChildren = (bool)useForChildren.GetValue(propertyDrawer);
-                        if (useThisForChildren)
+                var types = new List<Type>();
+                foreach (var assembly in assemblies)
+                {
+                    if (assembly == null)
+                    {
+                        Debug.LogWarning("Encountered a null assembly in AppDomain.CurrentDomain.GetAssemblies().");
+                        continue;
+                    }
+                    try
+                    {
+                        types.AddRange(assembly.GetTypes());
+                    }
+                    catch (ReflectionTypeLoadException ex)
+                    {
+                        Debug.LogWarning($"Failed to load types from assembly {assembly.FullName}: {ex.Message}");
+                        if (ex.Types != null)
                         {
-                            var childTypes = types.Where(t => targetedType.IsAssignableFrom(t) && t != targetedType);
-                            foreach (var childType in childTypes)
-                            {
-                                typeToDrawerType[childType] = type;
-                            }
+                            types.AddRange(ex.Types.Where(t => t != null));
                         }
                     }
-
+                    catch (Exception ex)
+                    {
+                        Debug.LogWarning($"Failed to load types from assembly {assembly.FullName}: {ex.Message}");
+                    }
                 }
+
+                foreach (Type type in types)
+                {
+                    if (type == null)
+                    {
+                        continue;
+                    }
+                    if (propertyDrawerType.IsAssignableFrom(type))
+                    {
+                        try
+                        {
+                            var customPropertyDrawers = type.GetCustomAttributes(true).OfType<CustomPropertyDrawer>().ToList();
+                            foreach (var propertyDrawer in customPropertyDrawers)
+                            {
+                                if (propertyDrawer == null)
+                                {
+                                    continue;
+                                }
+                                var targetedType = (Type)targetType.GetValue(propertyDrawer);
+                                typeToDrawerType[targetedType] = type;
+
+                                var useThisForChildren = (bool)useForChildren.GetValue(propertyDrawer);
+                                if (useThisForChildren)
+                                {
+                                    var childTypes = types.Where(t => t != null && targetedType.IsAssignableFrom(t) && t != targetedType);
+                                    foreach (var childType in childTypes)
+                                    {
+                                        typeToDrawerType[childType] = type;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogWarning($"Failed to process type {type.FullName}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"PopulateTypeToDrawer failed: {ex.Message}");
             }
         }
 

@@ -101,7 +101,11 @@ public class EasyEventEditorHandler
 
     static EasyEventEditorHandler()
     {
-        EditorApplication.update += OnEditorUpdate;
+        EditorApplication.delayCall += () =>
+        {
+            EditorApplication.update -= OnEditorUpdate;
+            EditorApplication.update += OnEditorUpdate;
+        };
     }
 
     static void OnEditorUpdate()

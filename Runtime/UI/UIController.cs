@@ -653,14 +653,7 @@ Utilities.UXFDebugLogError($"Text downloaded from {jsonURL} is cannot be parsed,
             www.timeout = 5;
             yield return www.SendWebRequest();
 
-            bool error;
-#if UNITY_2020_OR_NEWER
-            error = www.result != UnityWebRequest.Result.Success;
-#else
-#pragma warning disable
-            error = www.isHttpError || www.isNetworkError;
-#pragma warning restore
-#endif
+            bool error = www.result != UnityWebRequest.Result.Success;
 
             if (error)
             {

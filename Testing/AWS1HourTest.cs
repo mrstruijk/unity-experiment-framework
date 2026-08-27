@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -16,14 +16,11 @@ public class AWS1HourTest : MonoBehaviour
     void Update()
     {
         moveable.position = new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f));
-        fps.text = string.Format("{0:0}FPS", 1.0f / Time.smoothDeltaTime);
+        fps.text = (1.0f / Time.smoothDeltaTime).ToString("0") + "FPS";
 
         TimeSpan t = TimeSpan.FromSeconds(Time.time);
 
-        uptime.text = string.Format("{0:D2}h, {1:D2}m, {2:D2}s",
-                      t.Hours,
-                      t.Minutes,
-                      t.Seconds);
+        uptime.text = t.Hours.ToString("D2") + "h, " + t.Minutes.ToString("D2") + "m, " + t.Seconds.ToString("D2") + "s";
         }
 
     public void CreateTrials()
